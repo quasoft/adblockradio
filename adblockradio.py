@@ -1,17 +1,31 @@
 #!/usr/bin/env python3
 
+import os
+import sys
 import signal
 import daemon
 import lockfile
 import time
 from player import Player
 
-player = None
+STATION_FILE = 'station.txt'
 
+player = None
+uri = ""
 
 def setup():
-    global player
+    global player, uri
     player = Player()
+
+    uri = ""
+    if len(sys.argv) > 1:
+        uri = sys.argv[1]
+    elif os.path.isfile(STATION_FILE):
+        with open(STATION_FILE, 'r') as f:
+            uri = f.read().strip()
+
+    if len(uri) == 0:
+        raise ValueError('Specify radio station URI as start argument or add it in station.txt file!')
 
 
 def close():
@@ -24,13 +38,10 @@ def reload():
 
 
 def run():
-    global player
-    player.play("http://stream.radioreklama.bg:80/city64")
-    # player.set_property('uri', 'http://mp3channels.webradio.antenne.de/chillout')
-    # player.set_property('uri', 'http://149.13.0.81/city64.m3u')
-    # player.set_property('uri', 'http://stream.radioreklama.bg:80/city64')
-    # player.set_property('uri', 'http://stream.radioreklama.bg:80/radio1rock128')
-    # player.set_property('uri', 'http://stream.radioreklama.bg:80/nrj128')
+    global player, uri
+
+    player.play(uri)
+
     while True:
         time.sleep(1)
 

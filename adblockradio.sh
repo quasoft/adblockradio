@@ -7,11 +7,10 @@ PIDFILE=/tmp/adblockradio.lock
 
 case "$1" in
     start)
-        /usr/bin/python3 $DAEMON
+        /usr/bin/python3 $DAEMON $2
     ;;
     stop)
-        PID=`ps x | grep adblockradio.py | head -1 | awk '{print $1}'`
-        kill $PID
+        for pid in $(ps x | grep adblockradio.py | awk '{print $1}'); do kill $pid; done
     ;;
     *)
         echo "usage: adblockradio.sh {start|stop}"
