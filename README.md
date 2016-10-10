@@ -23,8 +23,8 @@
 2. Install GStreamer:
 
         sudo apt-get install gstreamer1.0
-        sudo apt-get install gst-plugins-base1.0
-        sudo apt-get install gst-plugins-good1.0
+        sudo apt-get install gstreamer1.0-plugins-base
+        sudo apt-get install gstreamer1.0-plugins-good
 
 3. Download project:
 
