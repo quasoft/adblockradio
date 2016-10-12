@@ -7,7 +7,7 @@ PIDFILE=/tmp/adblockradio.lock
 
 case "$1" in
     start)
-        /usr/bin/python3 $DAEMON $2
+        /usr/bin/python3 $DAEMON --station $2 --daemon
     ;;
     stop)
         for pid in $(ps x | grep adblockradio.py | awk '{print $1}'); do kill $pid; done
