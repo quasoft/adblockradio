@@ -32,12 +32,16 @@
         git clone https://github.com/quasoft/adblockradio.git
         cd adblockradio
 
-4. Start player:
+4. Start player as daemon:
 
         ./adblockradio.sh start http://mp3channels.webradio.antenne.de/chillout
 
+        or, to start Python script, directly, as a regular process:
+
+        /usr/bin/python3 adblockradio.py --station http://mp3channels.webradio.antenne.de/chillout
+
    *You can also add the URI to the radio station to `station.txt` file*
 
-5. Stop player:
+5. Stop daemon of player:
 
         ./adblockradio.sh stop
