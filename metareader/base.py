@@ -1,12 +1,12 @@
-import requests
 from threading import Thread, Event
 
 
-class BaseMetaReader:
+class BaseReader:
     def __init__(self, uri):
         self._uri = uri
         self._stopFlag = Event()
         self._thread = None
+        self.event_title_read = None
 
     def start(self):
         if self._thread:
@@ -28,3 +28,7 @@ class BaseMetaReader:
         # while True:
         #     if self._stopFlag.is_set():
         #         break
+
+    def fire_title_read(self, title):
+        if self.event_title_read:
+            self.event_title_read(self, title)

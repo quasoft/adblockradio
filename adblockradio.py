@@ -6,7 +6,6 @@ import signal
 import daemon as python_daemon
 import lockfile
 import time
-import plac
 from player import Player
 
 
@@ -16,7 +15,7 @@ _player = None
 def main(
     station: ('URI to radio station (direct link, not playlist)', 'option', 's'),
     daemon: ('Start radio as daemon', 'flag', 'd'),
-    config: ("Path to config file",'option', 'c')
+    config: ("Path to config file", 'option', 'c')
 ):
     context = python_daemon.DaemonContext(
         working_directory='/',

@@ -1,9 +1,9 @@
+from metareader.base import BaseReader
 import requests
-from threading import Thread, Event
-from metareader.base_metareader import BaseMetaReader
+import re
 
 
-class IcecastMetaReader(BaseMetaReader):
+class IcecastReader(BaseReader):
     def __init__(self, uri):
         super().__init__(uri)
         self._user_agent = 'iTunes/9.1.1'
@@ -26,11 +26,29 @@ class IcecastMetaReader(BaseMetaReader):
             if self._stopFlag.is_set():
                 break
 
+            # Drop audio data
             resp.raw.read(meta_interval)
+
+            # Check how many blocks of meta data are available
+            # Can be zero, if no data is available
             meta_blocks = resp.raw.read(1)
             if meta_blocks:
                 meta_length = ord(meta_blocks) * 16
+
+                # Read all the meta data
                 meta_data = resp.raw.read(meta_length)
-                print(meta_data)
+
+                # Parse it and retrieve the StreamTitle
+                self._parse(str(meta_data))
 
         resp.close()
+
+    def _parse(self, data):
+        if not data:
+            return
+
+        r = re.search("StreamTitle=['\"]?([^'\"]+)['\"]?;", data)
+        if r:
+            title = r.group(1)
+            if title:
+                self.fire_title_read(title.strip())
