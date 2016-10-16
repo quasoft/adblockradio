@@ -4,7 +4,7 @@ The player is currently using metadata tags, containing song title, to detect ad
 
 ## Requirements:
 
-* Python 3.4 or newer
+* Python 3.4 or newer <img align="right" src="docs/screenshot.png">
 * GStreamer 1.X
 * Python bindings for GStreamer
 * PyQt4
