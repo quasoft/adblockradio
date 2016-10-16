@@ -47,21 +47,23 @@ The player is currently using metadata tags, containing song title, to detect ad
         git clone https://github.com/quasoft/adblockradio.git
         cd adblockradio
 
-6. Start player in system tray:
+6. Edit list of radio stations in config.py
+
+7. Start player in system tray:
 
         /usr/bin/python3 adblockradio.py
 
-        or, to start with a specific radio station:
+   or, to start with a specific radio station:
 
         /usr/bin/python3 adblockradio.py --station http://mp3channels.webradio.antenne.de/chillout
 
    *You can add more radio stations to config.py file*
 
-7. Start player as daemon:
+8. Start player as daemon:
 
         ./adblockradio.sh start http://mp3channels.webradio.antenne.de/chillout
 
-        To stop daemon of player:
+   To stop daemon of player:
 
         ./adblockradio.sh stop
 
