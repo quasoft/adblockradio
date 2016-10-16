@@ -11,8 +11,8 @@ def get_random_station(stations):
 
 
 def get_station_name(uri):
-    station = next(station for station in config.stations if station['uri'] == uri)
-    return station['name']
+    name = next((station['name'] for station in config.stations if station['uri'] == uri), "")
+    return name
 
 
 def get_stream_from_playlist(url):
