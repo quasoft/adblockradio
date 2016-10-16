@@ -3,71 +3,146 @@
 import os
 import sys
 import signal
-import daemon as python_daemon
-import lockfile
 import time
+import lockfile
+import threading
+
+from PyQt4 import QtGui
+import gi
+gi.require_version('Gst', '1.0')
+gi.require_version('GstBase', '1.0')
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
+
+import config
+import systray
 from player import Player
 
 
-_player = None
+class App(QtGui.QApplication):
+    def __init__(self, argv):
+        QtGui.QApplication.__init__(self, argv)
+
+        self._widget = None
+        self._icon = None
+        self.show_tray_icon = True
+        self.last_uri = ""
+
+        self._player = Player()
+        self._player.event_state_change = self.on_state_change
+
+    def init_tray_icon(self):
+        self._widget = QtGui.QWidget()
+        self._icon = systray.SystemTrayIcon(QtGui.QIcon("ui/playing.svg"), self._widget)
+        self._icon.event_play_click = self.on_play_click
+        self._icon.event_pause_click = self.on_pause_click
+        self._icon.event_station_select = self.on_station_select
+        self._icon.event_exit_click = self.on_exit_click
+
+    def run(self, uri):
+        if self.show_tray_icon:
+            self.init_tray_icon()
+
+        self._player.play(uri)
+
+        sys.exit(self.exec_())
+
+    def terminate(self):
+        self._player.stop()
+        super().quit()
+
+    def update_ui(self):
+        if self._icon:
+            self._icon.update_ui(self._player.is_playing)
+
+    def update_ui_station(self):
+        if self._icon:
+            station_name = next((item["name"] for item in config.stations if item["uri"] == self._player.current_uri))
+            self._icon.update_ui_station(station_name)
+
+    def on_play_click(self, sender):
+        self._player.play()
+
+    def on_pause_click(self, sender):
+        self._player.stop()
+
+    def on_station_select(self, sender, station):
+        self._player.stop()
+        self._player.play(station["uri"])
+        self.update_ui()
+
+    def on_exit_click(self, sender):
+        self.terminate()
+
+    def on_state_change(self, sender):
+        self.update_ui()
+
+
+class ConsoleApp:
+    def __init__(self):
+        GObject.threads_init()
+
+        self._player = Player()
+
+    def run(self, uri):
+        self._player.play(uri)
+
+        self._loop = GObject.MainLoop()
+        threading.Thread(target=self._loop.run).start()
+        while True:
+            time.sleep(1)
+
+    def terminate(self):
+        self._player.stop()
+        self._loop.quit()
 
 
 def main(
-    station: ('URI to radio station (direct link, not playlist)', 'option', 's'),
-    daemon: ('Start radio as daemon', 'flag', 'd'),
-    config: ("Path to config file", 'option', 'c')
+    station: ('URI to radio station (direct link, not playlist)', 'option', 's') = "",
+    daemon: ('Start radio as daemon', 'flag', 'd') = False,
+    console: ('Start as console application', 'flag', 'c') = False
 ):
-    context = python_daemon.DaemonContext(
-        working_directory='/',
-        umask=2,
-        pidfile=lockfile.FileLock('/tmp/adblockradio')
-    )
-
-    context.signal_map = {
-        signal.SIGTERM: close,
-        signal.SIGHUP: 'terminate',
-        signal.SIGUSR1: reload,
-    }
-
-    # Initialize application
-    global _player
-    _player = Player()
+    """
+    The main function to start the application. App can be started in three modes:
+      * Qt application with system tray icon, default, no options
+      * Console process, with -c option
+    """
 
     # Determine radio station
-    uri = ""
-    if station:
-        uri = station
-    #elif os.path.isfile(STATION_FILE):
-    #    with open(STATION_FILE, 'r') as f:
-    #        uri = f.read().strip()
+    #uri = ""
+    #if not station:
+    #    uri = station
 
-    if len(uri) == 0:
-        raise ValueError('Specify radio station URI as start argument or add it in station.txt file!')
+    #if len(uri) == 0:
+    #    raise ValueError('Specify radio station URI as start argument or add one in config.py file!')
+
+    uri = station
+    # TODO: If no station specified, play last one or a random one
 
     # Start as daemon, if requested
     if daemon:
+        import daemon as python_daemon
+        context = python_daemon.DaemonContext(
+            working_directory='/',
+            umask=2,
+            pidfile=lockfile.FileLock('/tmp/adblockradio')
+        )
+
+        app = ConsoleApp()
+        context.signal_map = {
+            signal.SIGTERM: app.terminate,
+            signal.SIGHUP: 'terminate'
+        }
         with context:
-            run(uri)
+            app.run(uri)
+
+    elif console:
+        app = App(sys.argv)
+        app.show_tray_icon = False
+        app.run(uri)
     else:
-        run(uri)
-
-
-def close():
-    global _player
-    _player.stop()
-
-
-def reload():
-    print("Reload config")
-
-
-def run(uri):
-    global _player
-
-    _player.play(uri)
-
-    while True:
-        time.sleep(1)
+        app = App(sys.argv)
+        app.run(uri)
 
 
 if __name__ == '__main__':
