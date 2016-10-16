@@ -55,13 +55,13 @@ The player is currently using metadata tags, containing song title, to detect ad
 
    or, to start with a specific radio station:
 
-        /usr/bin/python3 adblockradio.py --station http://mp3channels.webradio.antenne.de/chillout
+        /usr/bin/python3 adblockradio.py --station URL_TO_RADIO_STREAM
 
    *You can add more radio stations to config.py file*
 
 8. Start player as daemon:
 
-        ./adblockradio.sh start http://mp3channels.webradio.antenne.de/chillout
+        ./adblockradio.sh start
 
    To stop daemon:
 
