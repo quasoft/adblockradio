@@ -11,7 +11,7 @@
 
 ## How to install:
 
-1. Install python-daemon:
+1. Install python-daemon (for daemonizing player):
 
         pip install python-daemon
 
@@ -20,19 +20,23 @@
         sudo apt-get install python3-pip
         /usr/bin/python3 -m pip install python-daemon
 
-2. Install GStreamer:
+2. Install GStreamer (for streaming audio):
 
         sudo apt-get install gstreamer1.0
         sudo apt-get install gstreamer1.0-plugins-base
         sudo apt-get install gstreamer1.0-plugins-good
 
-3. Download project:
+3. Install PyQT4 (for system tray icon):
+
+        sudo apt-get install python3-pyqt4
+
+4. Download project:
 
         cd ~/
         git clone https://github.com/quasoft/adblockradio.git
         cd adblockradio
 
-4. Start player as daemon:
+5. Start player as daemon:
 
         ./adblockradio.sh start http://mp3channels.webradio.antenne.de/chillout
 
@@ -42,6 +46,11 @@
 
    *You can also add the URI to the radio station to `station.txt` file*
 
-5. Stop daemon of player:
+6. Stop daemon of player:
 
         ./adblockradio.sh stop
+
+
+## Credits
+
+* System tray icons by https://www.iconfinder.com/ChihabJr
