@@ -54,7 +54,7 @@ class IcecastReader(BaseReader):
         # TODO: use character encoding
         #data = unicode(data)
 
-        r = re.search("StreamTitle=(.+);", data)
+        r = re.search("StreamTitle=(.+?);", data)
         if r:
             title = r.group(1)
             if title:
