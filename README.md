@@ -8,6 +8,7 @@ The player is currently using metadata tags, containing song title, to detect ad
 * GStreamer 1.X
 * Python bindings for GStreamer
 * PyQt4
+* python appdirs package
 * python-daemon package (only needed, if you want the player to run as console daemon)
 
 ## How to install:
@@ -22,7 +23,16 @@ The player is currently using metadata tags, containing song title, to detect ad
 
         sudo apt-get install python3-pyqt4
 
-3. Install python-daemon (for daemonizing player):
+3. Install appdirs
+
+        pip install appdirs
+
+   or
+
+        sudo apt-get install python3-pip
+        /usr/bin/python3 -m pip install appdirs
+
+4. Install python-daemon (for daemonizing player):
 
         pip install python-daemon
 
@@ -31,13 +41,13 @@ The player is currently using metadata tags, containing song title, to detect ad
         sudo apt-get install python3-pip
         /usr/bin/python3 -m pip install python-daemon
 
-4. Download project:
+5. Download project:
 
         cd ~/
         git clone https://github.com/quasoft/adblockradio.git
         cd adblockradio
 
-5. Start player in system tray:
+6. Start player in system tray:
 
         /usr/bin/python3 adblockradio.py
 
@@ -47,11 +57,11 @@ The player is currently using metadata tags, containing song title, to detect ad
 
    *You can add more radio stations to config.py file*
 
-5. Start player as daemon:
+7. Start player as daemon:
 
         ./adblockradio.sh start http://mp3channels.webradio.antenne.de/chillout
 
-6. Stop daemon of player:
+        To stop daemon of player:
 
         ./adblockradio.sh stop
 
