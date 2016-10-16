@@ -89,3 +89,6 @@ ENV/
 .ropeproject
 
 .idea/*
+
+# Folder with experimental tests
+exp/*
