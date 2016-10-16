@@ -63,7 +63,7 @@ The player is currently using metadata tags, containing song title, to detect ad
 
         ./adblockradio.sh start http://mp3channels.webradio.antenne.de/chillout
 
-   To stop daemon of player:
+   To stop daemon:
 
         ./adblockradio.sh stop
 
