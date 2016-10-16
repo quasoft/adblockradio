@@ -40,7 +40,10 @@ class IcecastReader(BaseReader):
                 meta_length = ord(meta_blocks) * 16
 
                 # Read all the meta data
-                meta_data = str(resp.raw.read(meta_length))
+                #meta_data = str(resp.raw.read(meta_length))
+                meta_data = resp.raw.read(meta_length)
+
+                meta_data = meta_data.decode(resp.encoding or 'utf-8')
 
                 # Parse it and retrieve the StreamTitle
                 self._parse(meta_data)

@@ -2,6 +2,8 @@ from threading import Thread, Event
 
 from PyQt4 import QtCore
 
+import utils
+
 
 class BaseReader(QtCore.QObject):
     signal_title_read = QtCore.pyqtSignal(object)
@@ -9,6 +11,11 @@ class BaseReader(QtCore.QObject):
     def __init__(self, uri):
         super().__init__()
         self._uri = uri
+
+        # Automatically extract uri to stream from m3u playlists
+        if self._uri.endswith("m3u"):
+            self._uri = utils.get_stream_from_playlist(self._uri)
+
         self._stopFlag = Event()
         self._thread = None
         self.event_title_read = None

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import random
+import requests
 
 import config
 
@@ -12,3 +13,26 @@ def get_random_station(stations):
 def get_station_name(uri):
     station = next(station for station in config.stations if station['uri'] == uri)
     return station['name']
+
+
+def get_stream_from_playlist(url):
+    resp = requests.get(
+        url,
+        headers={
+            'User-Agent': config.user_agent
+        }
+    )
+    resp.raise_for_status()
+
+    content = str(resp.text)
+    resp.close()
+
+    if not content:
+        return None
+
+    lines = (line for line in content.splitlines() if line.strip().startswith("http"))
+
+    if not lines:
+        return None
+
+    return next(lines)
