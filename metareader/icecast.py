@@ -1,24 +1,28 @@
-from metareader.base import BaseReader
 import requests
 import re
+
+from metareader.base import BaseReader
 
 
 class IcecastReader(BaseReader):
     def __init__(self, uri):
         super().__init__(uri)
-        self._user_agent = 'iTunes/9.1.1'
+        self.user_agent = 'iTunes/9.1.1'
 
     def _run(self):
         resp = requests.get(
             self._uri,
             headers={
-                'User-Agent': self._user_agent,
+                'User-Agent': self.user_agent,
                 'Icy-MetaData': 1
             },
             stream=True
         )
         resp.raise_for_status()
 
+        meta_interval = resp.headers.get('icy-metaint')
+        if meta_interval is None:
+            raise ValueError("Stream has no icecast metadata (no icy-metaint value received). Fallback to audio data tags.")
         meta_interval = int(resp.headers.get('icy-metaint'))
 
         while True:
@@ -36,10 +40,10 @@ class IcecastReader(BaseReader):
                 meta_length = ord(meta_blocks) * 16
 
                 # Read all the meta data
-                meta_data = resp.raw.read(meta_length)
+                meta_data = str(resp.raw.read(meta_length))
 
                 # Parse it and retrieve the StreamTitle
-                self._parse(str(meta_data))
+                self._parse(meta_data)
 
         resp.close()
 
@@ -47,8 +51,12 @@ class IcecastReader(BaseReader):
         if not data:
             return
 
-        r = re.search("StreamTitle=['\"]?([^'\"]+)['\"]?;", data)
+        # TODO: use character encoding
+        #data = unicode(data)
+
+        r = re.search("StreamTitle=(.+);", data)
         if r:
             title = r.group(1)
             if title:
-                self.fire_title_read(title.strip())
+                title = title.strip(" \"'")
+                self.emit_title_read(title.strip())
