@@ -7,12 +7,11 @@ class BlockMode(Enum):
     REDUCE_AND_SWITCH = 3
 
 
+# Sample configuration of blacklisted tags:
 blacklisted_tags = [
-    '.*RADIO ENERGY.*',         # Energy
-    '^(?![\s\S])',              # NJoy
-    '.*RADIO1.*',               # Radio 1
-    '.*ЕДНО РОК РАДИО.*',       # Radio 1 Rock
-    '.*RADIO CITY.*',           # City
+    '.*MYRADIO123.*',        # Block anything with title containing 'MYRADIO123' text (usually name of radio)
+    '^(?![\s\S])',           # Block anything that has no title
+    '.*HATE THAT SONG.*',    # Block a song with specific title 'HATE THAT SONG'
 ]
 """List of regular expressions with blacklisted tags. Blacklisted
 tags are used for detecting advertisement blocks, when the stream
@@ -52,14 +51,7 @@ ad_block_volume = 0.1
 """Volume level during advertisement blocks"""
 
 stations = [
-    {'name': 'Energy', 'uri': 'http://stream.radioreklama.bg:80/nrj128'},   # Ice metadata tags
-    {'name': 'NJoy', 'uri': 'http://46.10.150.123:80/njoy.mp3'},            # Empty tags during advertisement blocks.
-    #{'name': 'Star FM', 'uri': 'http://pulsar.atlantis.bg:8000/starfm'},    # No stream tags!
-    #{'name': 'Z-Rock', 'uri': 'http://46.10.150.123:80/z-rock.mp3'},        # No stream tags!
-    {'name': 'Radio 1', 'uri': 'http://stream.radioreklama.bg:80/radio1128'},  # Ice metadata tags
-    {'name': 'Radio 1 Rock', 'uri': 'http://stream.radioreklama.bg:80/radio1rock.ogg'},  # Tags only in ogg audio data.
-    {'name': 'City', 'uri': 'http://stream.radioreklama.bg:80/city64'},     # Ice metadata tags
-    #{'name': 'Energy-90s', 'uri': 'http://stream.radioreklama.bg:80/energy-90s'},  # No stream tags!
+    {'name': 'MyRadio123', 'uri': 'http://exampleofurltostream.local/stream.m3u'},
 ]
 """Replace these with URLs to streams of your favourite radio stations.
 Currently playlists like m3u are not supported, and you need to
