@@ -7,12 +7,17 @@ import time
 import lockfile
 import threading
 
-from PyQt4 import QtGui
 import gi
+
+import userdata
+import utils
+
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
+
+from PyQt4 import QtGui
 
 import config
 import systray
@@ -45,6 +50,8 @@ class App(QtGui.QApplication):
 
         self._player.play(uri)
 
+        userdata.set_last_station(uri)
+
         sys.exit(self.exec_())
 
     def terminate(self):
@@ -70,6 +77,8 @@ class App(QtGui.QApplication):
         self._player.stop()
         self._player.play(station["uri"])
         self.update_ui()
+
+        userdata.set_last_station(station["uri"])
 
     def on_exit_click(self, sender):
         self.terminate()
@@ -109,15 +118,17 @@ def main(
     """
 
     # Determine radio station
-    #uri = ""
-    #if not station:
-    #    uri = station
-
-    #if len(uri) == 0:
-    #    raise ValueError('Specify radio station URI as start argument or add one in config.py file!')
-
-    uri = station
     # TODO: If no station specified, play last one or a random one
+    uri = station
+    if not uri:
+        uri = userdata.get_last_station()
+        print("Connecting to last station selected: %s" % utils.get_station_name(uri))
+    if not uri:
+        station = utils.get_random_station(config.stations)
+        print("Station randomly selected: %s" % station['name'])
+        uri = station['uri']
+    if not uri:
+        raise ValueError('Specify radio station URI as start argument or add one in config.py file!')
 
     # Start as daemon, if requested
     if daemon:

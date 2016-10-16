@@ -3,6 +3,7 @@ import threading
 import re
 import random
 
+import utils
 from metareader.icecast import IcecastReader
 import config
 
@@ -110,13 +111,12 @@ class Player:
 
                         other_stations = list(filter(lambda s: s['uri'] != self._last_uri, config.stations))
 
-                        random_idx = random.randint(0, len(other_stations) - 1)
-                        random_uri = other_stations[random_idx]['uri']
+                        station = utils.get_random_station(other_stations)
 
-                        print("Station chosen: %s" % other_stations[random_idx]['name'])
+                        print("Station chosen: %s" % station['name'])
 
                         self.stop()
-                        self.play(random_uri)
+                        self.play(station['uri'])
             else:
                 if self._in_ad_block:
                     print('Restoring volume to maximum.')
