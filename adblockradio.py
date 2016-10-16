@@ -58,13 +58,13 @@ class App(QtGui.QApplication):
         self._player.stop()
         super().quit()
 
-    def update_ui(self):
+    def update_ui_state(self):
         if self._icon:
-            self._icon.update_ui(self._player.is_playing)
+            self._icon.update_ui_state(self._player.is_playing)
 
     def update_ui_station(self):
         if self._icon:
-            station_name = next((item["name"] for item in config.stations if item["uri"] == self._player.current_uri))
+            station_name = utils.get_station_name(self._player.current_uri)
             self._icon.update_ui_station(station_name)
 
     def on_play_click(self, sender):
@@ -76,7 +76,8 @@ class App(QtGui.QApplication):
     def on_station_select(self, sender, station):
         self._player.stop()
         self._player.play(station["uri"])
-        self.update_ui()
+        self.update_ui_state()
+        self.update_ui_station()
 
         userdata.set_last_station(station["uri"])
 
@@ -84,7 +85,8 @@ class App(QtGui.QApplication):
         self.terminate()
 
     def on_state_change(self, sender):
-        self.update_ui()
+        self.update_ui_state()
+        self.update_ui_station()
 
 
 class ConsoleApp:

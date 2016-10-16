@@ -34,7 +34,8 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         menu.addSeparator()
         self._stations_menu = menu.addMenu("Stations")
         for station in config.stations:
-            self._stations_menu.addAction(station['name'], functools.partial(self.on_station_select, station))
+            item = self._stations_menu.addAction(station['name'], functools.partial(self.on_station_select, station))
+            item.setCheckable(True)
 
         menu.addSeparator()
         self._exit_action = menu.addAction("Exit", self.on_exit_click)
@@ -82,7 +83,7 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         if self.event_exit_click:
             self.event_exit_click(self)
 
-    def update_ui(self, is_playing):
+    def update_ui_state(self, is_playing):
         if is_playing:
             new_icon = self._icon_playing
         else:
@@ -95,11 +96,14 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self._play_action.setVisible(not is_playing)
         self._pause_action.setVisible(is_playing)
 
-    def update_ui_station_name(self, station_name):
+    def update_ui_station(self, station_name):
         if config.show_systray_tooltip:
             if self._last_tooltip != station_name:
                 self.setToolTip(station_name)
                 self._last_tooltip = station_name
+
+        for item in self._stations_menu.actions():
+            item.setChecked(item.text() == station_name)
 
 
 class SystemTrayApp:

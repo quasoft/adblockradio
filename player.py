@@ -135,8 +135,13 @@ class Player:
         else:
             uri = self._last_uri
 
+        # Automatically extract uri to stream from m3u playlists
+        stream_uri = uri
+        if stream_uri.endswith("m3u"):
+            stream_uri = utils.get_stream_from_playlist(stream_uri)
+
         # Set URI to online radio
-        self._player.set_property('uri', uri)
+        self._player.set_property('uri', stream_uri)
 
         # Start playing
         self._player.set_state(Gst.State.PLAYING)
