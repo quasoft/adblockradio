@@ -124,11 +124,13 @@ def main(
     uri = station
     if not uri:
         uri = userdata.get_last_station()
-        print("Connecting to last station selected: %s" % utils.get_station_name(uri))
+        if uri:
+            print("Connecting to last station selected: %s" % utils.get_station_name(uri))
     if not uri:
         station = utils.get_random_station(config.stations)
-        print("Station randomly selected: %s" % station['name'])
         uri = station['uri']
+        if uri:
+            print("Station randomly selected: %s" % station['name'])
     if not uri:
         raise ValueError('Specify radio station URI as start argument or add one in config.py file!')
 

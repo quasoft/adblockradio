@@ -4,6 +4,7 @@ from enum import Enum
 class BlockMode(Enum):
     REDUCE_VOLUME = 1
     SWITCH_STATION = 2
+    REDUCE_AND_SWITCH = 3
 
 
 blacklisted_tags = [
@@ -20,12 +21,29 @@ Often this title contains a fixed string during advertisement blocks,
 which makes it the ideal variant for detecting ads.
 """
 
-block_mode = BlockMode.SWITCH_STATION
+block_mode = BlockMode.REDUCE_AND_SWITCH
 """Choose what should happen when an advertisement block is detected:
-   * BlockMode.REDUCE_VOLUME - attenuate audio
-   * BlockMode.SWITCH_STATION - switch to another (randomly chosen) radio station
+
+   * BlockMode.REDUCE_VOLUME - Attenuate audio during advertisement blocks.
+     This mode can cause long periods of silence (for the duration of the
+     advertisement block) if min_level is set to a value close to zero.
+
+   * BlockMode.SWITCH_STATION - Switch to another (randomly chosen) radio station.
+     This mode switches to another radio station, immediately after an advertisement
+     is detected. This can cause frequent switches of stations if the radio station
+     often emits short ads with the station name.
+
+   * BlockMode.REDUCE_AND_SWITCH - Initially reduces volume when ad is detected. If the
+     duration of the advertisement block is longer than max_adblock_duration, switch
+     to another radio station.
+
 """
 
+max_ad_duration = 15
+"""Maximum allowed duration of advertisement blocks in seconds.
+Only used if block_mode is set to BlockMode.REDUCE_AND_SWITCH.
+
+"""
 
 max_volume = 1.0
 """Maximum volume - volume during songs"""

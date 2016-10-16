@@ -3,6 +3,8 @@ import threading
 import re
 import random
 
+import time
+
 import utils
 from metareader.icecast import IcecastReader
 import config
@@ -16,7 +18,9 @@ from gi.repository import GObject, Gst
 class Player:
     def __init__(self):
         self._in_ad_block = False
+        self._last_ad_time = None
         self._last_uri = ""
+        GObject.timeout_add(1000, self.on_timer_check_ad_duration)
 
         self.event_state_change = None
 
@@ -102,27 +106,31 @@ class Player:
             if any(re.search(p, title) for p in config.blacklisted_tags):
                 if not self._in_ad_block:
                     print('Advertisement tag detected.')
-                    if config.block_mode == config.BlockMode.REDUCE_VOLUME:
+                    if config.block_mode in (config.BlockMode.REDUCE_VOLUME, config.BlockMode.REDUCE_AND_SWITCH):
                         print('Reducing volume.')
                         self.volume = config.ad_block_volume
                         self._in_ad_block = True
+                        self._last_ad_time = time.time()
                     elif config.block_mode == config.BlockMode.SWITCH_STATION:
-                        print('Switching to another station.')
-
-                        other_stations = list(filter(lambda s: s['uri'] != self._last_uri, config.stations))
-
-                        station = utils.get_random_station(other_stations)
-
-                        print("Station chosen: %s" % station['name'])
-
-                        self.stop()
-                        self.play(station['uri'])
+                        self.switch_to_another_station()
             else:
                 if self._in_ad_block:
                     print('Restoring volume to maximum.')
-                    if config.block_mode == config.BlockMode.REDUCE_VOLUME:
+                    if config.block_mode in (config.BlockMode.REDUCE_VOLUME, config.BlockMode.REDUCE_AND_SWITCH):
                         self.volume = config.max_volume
                     self._in_ad_block = False
+                    self._last_ad_time = None
+
+    def on_timer_check_ad_duration(self):
+        if self._in_ad_block and self._last_ad_time:
+            duration = time.time() - self._last_ad_time
+            print("Ad block with duration of %d seconds." % duration)
+            if (config.block_mode == config.BlockMode.REDUCE_AND_SWITCH
+                    and duration > config.max_ad_duration):
+                # Switch to another radio station
+                self.switch_to_another_station()
+
+        return True
 
     def fire_state_change(self):
         if self.event_state_change:
@@ -167,5 +175,16 @@ class Player:
         self._player.set_state(Gst.State.NULL)
 
         self._in_ad_block = False
+        self._last_ad_time = False
 
         self.fire_state_change()
+
+    def switch_to_another_station(self):
+        print('Switching to another station.')
+        other_stations = list(filter(lambda s: s['uri'] != self._last_uri, config.stations))
+        station = utils.get_random_station(other_stations)
+
+        print("Station chosen: %s" % station['name'])
+
+        self.stop()
+        self.play(station['uri'])
