@@ -15,41 +15,30 @@ The player is currently using metadata tags, containing song title, to detect ad
 
 1. Install GStreamer (for streaming audio):
 
-        sudo apt-get install gstreamer1.0
-        sudo apt-get install gstreamer1.0-plugins-base
-        sudo apt-get install gstreamer1.0-plugins-good
+        sudo apt-get install gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good
 
 2. Install PyQT4 (for system tray icon):
 
         sudo apt-get install python3-pyqt4
 
-3. Install appdirs
+3. Install plac, appdirs and python-daemon (for daemonizing player)
 
-        pip install appdirs
-
-   or
-
-        sudo apt-get install python3-pip
-        /usr/bin/python3 -m pip install appdirs
-
-4. Install python-daemon (for daemonizing player):
-
-        pip install python-daemon
+        pip install appdirs plac python-daemon
 
    or
 
         sudo apt-get install python3-pip
-        /usr/bin/python3 -m pip install python-daemon
+        /usr/bin/python3 -m pip install appdirs plac python-daemon
 
-5. Download project:
+4. Download project:
 
         cd ~/
         git clone https://github.com/quasoft/adblockradio.git
         cd adblockradio
 
-6. Edit list of radio stations in config.py
+5. Edit list of radio stations and blacklisted tags in config.py
 
-7. Start player in system tray:
+6. Start player in system tray:
 
         /usr/bin/python3 adblockradio.py
 
@@ -59,7 +48,7 @@ The player is currently using metadata tags, containing song title, to detect ad
 
    *You can add more radio stations to config.py file*
 
-8. Start player as daemon:
+7. Start player as daemon:
 
         ./adblockradio.sh start
 
