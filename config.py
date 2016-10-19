@@ -60,4 +60,6 @@ provider an URL to the stream itself.
 
 show_systray_tooltip = True
 
+show_song_title = True
+
 user_agent = 'iTunes/9.1.1'
