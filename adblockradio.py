@@ -35,6 +35,7 @@ class App(QtGui.QApplication):
 
         self._player = Player()
         self._player.event_state_change = self.on_state_change
+        self._player.event_title_change = self.on_title_change
 
     def init_tray_icon(self):
         self._widget = QtGui.QWidget()
@@ -87,6 +88,10 @@ class App(QtGui.QApplication):
     def on_state_change(self, sender):
         self.update_ui_state()
         self.update_ui_station()
+
+    def on_title_change(self, sender, title):
+        if self._icon:
+            self._icon.update_ui_title(title)
 
 
 class ConsoleApp:

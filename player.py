@@ -23,6 +23,7 @@ class Player:
         GObject.timeout_add(1000, self.on_timer_check_ad_duration)
 
         self.event_state_change = None
+        self.event_title_change = None
 
         # Initialize GStreamer
         Gst.init(None)
@@ -121,6 +122,8 @@ class Player:
                     self._in_ad_block = False
                     self._last_ad_time = None
 
+            self.fire_title_change(title)
+
     def on_timer_check_ad_duration(self):
         if self._in_ad_block and self._last_ad_time:
             duration = time.time() - self._last_ad_time
@@ -135,6 +138,10 @@ class Player:
     def fire_state_change(self):
         if self.event_state_change:
             self.event_state_change(self)
+
+    def fire_title_change(self, title):
+        if self.event_title_change:
+            self.event_title_change(self, title)
 
     def play(self, uri=""):
         # Play last URI, if none provided

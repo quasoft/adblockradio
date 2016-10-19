@@ -26,6 +26,7 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self._last_icon = None
 
         self._last_tooltip = ""
+        self._last_song_title = ""
 
         menu = QtGui.QMenu(parent)
         self._play_action = menu.addAction("Play", self.on_play_click)
@@ -104,6 +105,12 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
 
         for item in self._stations_menu.actions():
             item.setChecked(item.text() == station_name)
+
+    def update_ui_title(self, title):
+        if config.show_song_title:
+            if self._last_song_title != title:
+                self._pause_action.setText('Pause %s' % title)
+                self._last_song_title = title
 
 
 class SystemTrayApp:
