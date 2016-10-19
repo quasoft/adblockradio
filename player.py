@@ -20,6 +20,7 @@ class Player:
         self._in_ad_block = False
         self._last_ad_time = None
         self._last_uri = ""
+        self._just_switched = False
         GObject.timeout_add(1000, self.on_timer_check_ad_duration)
 
         self.event_state_change = None
@@ -116,22 +117,39 @@ class Player:
                         self.switch_to_another_station()
             else:
                 if self._in_ad_block:
-                    print('Restoring volume to maximum.')
+                    print('Restoring voslume to maximum.')
                     if config.block_mode in (config.BlockMode.REDUCE_VOLUME, config.BlockMode.REDUCE_AND_SWITCH):
                         self.volume = config.max_volume
                     self._in_ad_block = False
                     self._last_ad_time = None
+                    self._just_switched = False
 
             self.fire_title_change(title)
 
     def on_timer_check_ad_duration(self):
-        if self._in_ad_block and self._last_ad_time:
-            duration = time.time() - self._last_ad_time
+        if not self._last_ad_time:
+            return True
+        duration = time.time() - self._last_ad_time
+
+        if self._in_ad_block and self._just_switched:
+            # If we have just switched to a new station, and this station is also
+            # in advertisement block, switch immediately again to another one
+            print("Switch again immediately.")
+            if config.block_mode in (config.BlockMode.SWITCH_STATION, config.BlockMode.REDUCE_AND_SWITCH):
+                # Switch to another radio station
+                self.switch_to_another_station()
+        elif self._in_ad_block:
             print("Ad block with duration of %d seconds." % duration)
             if (config.block_mode == config.BlockMode.REDUCE_AND_SWITCH
                     and duration > config.max_ad_duration):
                 # Switch to another radio station
                 self.switch_to_another_station()
+        else:
+            # If 10 seconds have passed since last switch of station, reset the timer /
+            # disable immediate switch to yet another station
+            if self._just_switched and duration > config.max_ad_duration:
+                print("Reset just_switched")
+                self._just_switched = False
 
         return True
 
@@ -182,7 +200,8 @@ class Player:
         self._player.set_state(Gst.State.NULL)
 
         self._in_ad_block = False
-        self._last_ad_time = False
+        self._last_ad_time = None
+        self._just_switched = False
 
         self.fire_state_change()
 
@@ -195,3 +214,6 @@ class Player:
 
         self.stop()
         self.play(station['uri'])
+
+        self._just_switched = True
+        self._last_ad_time = time.time()
