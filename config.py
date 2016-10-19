@@ -38,7 +38,7 @@ block_mode = BlockMode.REDUCE_AND_SWITCH
 
 """
 
-max_ad_duration = 15
+max_ad_duration = 12
 """Maximum allowed duration of advertisement blocks in seconds.
 Only used if block_mode is set to BlockMode.REDUCE_AND_SWITCH.
 
