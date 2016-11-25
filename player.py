@@ -20,7 +20,7 @@ class Player:
         self._in_ad_block = False
         self._last_ad_time = None
         self._last_uri = ""
-        self._just_switched = False
+        self._just_switched = True
         GObject.timeout_add(1000, self.on_timer_check_ad_duration)
 
         self.event_state_change = None
@@ -86,6 +86,7 @@ class Player:
             err, debug = message.parse_error()
             print("Error: %s" % err, debug)
             self.stop()
+            self.play()
         elif t == Gst.MessageType.EOS:
             self.stop()
         elif t == Gst.MessageType.BUFFERING:
