@@ -42,6 +42,7 @@ class App(QtGui.QApplication):
         self._icon = systray.SystemTrayIcon(QtGui.QIcon("ui/playing.svg"), self._widget)
         self._icon.event_play_click = self.on_play_click
         self._icon.event_pause_click = self.on_pause_click
+        self._icon.event_add_to_fav_click = self.on_add_to_fav_click
         self._icon.event_station_select = self.on_station_select
         self._icon.event_exit_click = self.on_exit_click
 
@@ -73,6 +74,9 @@ class App(QtGui.QApplication):
 
     def on_pause_click(self, sender):
         self._player.stop()
+
+    def on_add_to_fav_click(self, sender, value):
+        userdata.add_song_to_favourites(value)
 
     def on_station_select(self, sender, station):
         self._player.stop()
