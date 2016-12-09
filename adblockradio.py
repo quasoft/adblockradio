@@ -4,6 +4,9 @@ import os
 import sys
 import signal
 import time
+import urllib.parse
+import webbrowser
+
 import lockfile
 import threading
 
@@ -43,6 +46,7 @@ class App(QtGui.QApplication):
         self._icon.event_play_click = self.on_play_click
         self._icon.event_pause_click = self.on_pause_click
         self._icon.event_add_to_fav_click = self.on_add_to_fav_click
+        self._icon.event_search_for_lyrics_click  = self.on_search_for_lyrics_click
         self._icon.event_station_select = self.on_station_select
         self._icon.event_exit_click = self.on_exit_click
 
@@ -77,6 +81,11 @@ class App(QtGui.QApplication):
 
     def on_add_to_fav_click(self, sender, value):
         userdata.add_song_to_favourites(value)
+
+    def on_search_for_lyrics_click(self, sender, value):
+        params = {'q': value}
+        url = 'http://search.azlyrics.com/search.php?' + urllib.parse.urlencode(params)
+        webbrowser.open(url)
 
     def on_station_select(self, sender, station):
         self._player.stop()

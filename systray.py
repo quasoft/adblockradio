@@ -16,6 +16,7 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self.event_play_click = None
         self.event_pause_click = None
         self.event_add_to_fav_click = None
+        self.event_search_for_lyrics_click = None
         self.event_station_select = None
         self.event_exit_click = None
 
@@ -36,6 +37,7 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         menu.addSeparator()
         self._current_song_menu = menu.addMenu("Current song")
         self._add_to_fav_action = self._current_song_menu.addAction("Add to favourites", self.on_add_to_fav_click)
+        self._search_for_lyrics_action = self._current_song_menu.addAction("Search for lyrics online", self.on_search_for_lyrics_click)
 
         menu.addSeparator()
         self._stations_menu = menu.addMenu("Stations")
@@ -60,9 +62,14 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self.fire_pause_click()
 
     def on_add_to_fav_click(self):
-        print("Add to favourites clicked", self._last_song_title)
+        print("Add to favourites clicked:", self._last_song_title)
         if self._last_song_title:
             self.fire_add_to_fav_click(self._last_song_title)
+
+    def on_search_for_lyrics_click(self):
+        print("Search for lyrics clicked:", self._last_song_title)
+        if self._last_song_title:
+            self.fire_search_for_lyrics_click(self._last_song_title)
 
     def on_station_select(self, station):
         print("Station changed to '%s'" % station['name'])
@@ -89,6 +96,10 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
     def fire_add_to_fav_click(self, song):
         if self.event_add_to_fav_click:
             self.event_add_to_fav_click(self, song)
+
+    def fire_search_for_lyrics_click(self, song):
+        if self.event_search_for_lyrics_click:
+            self.event_search_for_lyrics_click(self, song)
 
     def fire_station_select(self, station):
         if self.event_station_select:
