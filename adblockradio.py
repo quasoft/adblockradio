@@ -14,6 +14,7 @@ import gi
 
 import userdata
 import utils
+from favourites import FavouritesStorage
 
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
@@ -80,7 +81,7 @@ class App(QtGui.QApplication):
         self._player.stop()
 
     def on_add_to_fav_click(self, sender, value):
-        userdata.add_song_to_favourites(value)
+        FavouritesStorage.add_song(value)
 
     def on_search_for_lyrics_click(self, sender, value):
         params = {'q': value}
