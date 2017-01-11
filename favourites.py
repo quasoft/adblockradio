@@ -1,26 +1,16 @@
-import os
-import userdata
+from storage import Storage
 
 
-class FavouritesStorage:
-    FAVOURITE_SONGS_FILE = "favourite_songs.txt"
-    filename = os.path.join(userdata.get_data_dir(), FAVOURITE_SONGS_FILE)
+class FavouritesStorage(Storage):
+    filename = "favourite_songs.txt"
 
     @classmethod
     def is_song_added(cls, title):
-        if not os.path.isfile(cls.filename):
-            return False
-
-        with open(cls.filename, 'r') as f:
-            return title in f.read()
+        return cls.is_added(title)
 
     @classmethod
     def add_song(cls, title):
         if cls.is_song_added(title):
             return False
 
-        os.makedirs(os.path.dirname(cls.filename), exist_ok=True)
-        with open(cls.filename, 'a+') as f:
-            f.write(title + '\n')
-
-        return True
+        return cls.add_line(title)

@@ -15,6 +15,7 @@ import gi
 import userdata
 import utils
 from favourites import FavouritesStorage
+from state import StateStorage
 
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
@@ -57,7 +58,7 @@ class App(QtGui.QApplication):
 
         self._player.play(uri)
 
-        userdata.set_last_station(uri)
+        StateStorage.set_last_station(uri)
 
         sys.exit(self.exec_())
 
@@ -94,7 +95,7 @@ class App(QtGui.QApplication):
         self.update_ui_state()
         self.update_ui_station()
 
-        userdata.set_last_station(station["uri"])
+        StateStorage.set_last_station(station["uri"])
 
     def on_exit_click(self, sender):
         self.terminate()
@@ -142,7 +143,7 @@ def main(
     # TODO: If no station specified, play last one or a random one
     uri = station
     if not uri:
-        uri = userdata.get_last_station()
+        uri = StateStorage.get_last_station()
         if uri:
             print("Connecting to last station selected: %s" % utils.get_station_name(uri))
     if not uri:
