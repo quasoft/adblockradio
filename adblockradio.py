@@ -4,6 +4,8 @@ import os
 import sys
 import signal
 import time
+
+import re
 import urllib.parse
 import webbrowser
 
@@ -49,6 +51,7 @@ class App(QtGui.QApplication):
         self._icon.event_pause_click = self.on_pause_click
         self._icon.event_add_to_fav_click = self.on_add_to_fav_click
         self._icon.event_search_for_lyrics_click  = self.on_search_for_lyrics_click
+        self._icon.event_blacklist_click = self.on_blacklist_click
         self._icon.event_station_select = self.on_station_select
         self._icon.event_exit_click = self.on_exit_click
 
@@ -88,6 +91,24 @@ class App(QtGui.QApplication):
         params = {'q': value}
         url = 'http://search.azlyrics.com/search.php?' + urllib.parse.urlencode(params)
         webbrowser.open(url)
+
+    def on_blacklist_click(self, sender, value):
+        # If value contains at least five characters (not spaces), consider this a valid pattern
+        if utils.is_valid_blacklist_pattern(value):
+            # Construct regex pattern from value: '.*value.*'
+            pattern = '.*' + value.strip() + '.*'
+
+            # Ask user to modify pattern, if wanted
+            pattern, ok = utils.input_query(None, "Mark as advertisement - blacklist meta title", "Regex pattern:", pattern)
+            if not ok:
+                return
+
+            # Make sure the user entered a pattern that would not match spaces or an otherwise valid title
+            if any(re.search(pattern, t, re.LOCALE) for t in ['', ' ', 'JUST SOME TEST', "\n"]):
+                return
+
+            # TODO: Add pattern to blacklist
+            print("Blacklist %s" % pattern)
 
     def on_station_select(self, sender, station):
         self._player.stop()

@@ -17,6 +17,7 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self.event_pause_click = None
         self.event_add_to_fav_click = None
         self.event_search_for_lyrics_click = None
+        self.event_blacklist_click = None
         self.event_station_select = None
         self.event_exit_click = None
 
@@ -38,6 +39,8 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self._current_song_menu = menu.addMenu("Current song")
         self._add_to_fav_action = self._current_song_menu.addAction("Add to favourites", self.on_add_to_fav_click)
         self._search_for_lyrics_action = self._current_song_menu.addAction("Search for lyrics online", self.on_search_for_lyrics_click)
+        self._current_song_menu.addSeparator()
+        self._blacklist_action = self._current_song_menu.addAction("Mark as advertisement (Blacklist)", self.on_blacklist_click)
 
         menu.addSeparator()
         self._stations_menu = menu.addMenu("Stations")
@@ -71,6 +74,11 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         if self._last_song_title:
             self.fire_search_for_lyrics_click(self._last_song_title)
 
+    def on_blacklist_click(self):
+        print("Blacklist clicked:", self._last_song_title)
+        if self._last_song_title:
+            self.fire_blacklist_click(self._last_song_title)
+
     def on_station_select(self, station):
         print("Station changed to '%s'" % station['name'])
         self.fire_station_select(station)
@@ -100,6 +108,10 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
     def fire_search_for_lyrics_click(self, song):
         if self.event_search_for_lyrics_click:
             self.event_search_for_lyrics_click(self, song)
+
+    def fire_blacklist_click(self, song):
+        if self.event_blacklist_click:
+            self.event_blacklist_click(self, song)
 
     def fire_station_select(self, station):
         if self.event_station_select:
