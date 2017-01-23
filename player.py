@@ -14,8 +14,10 @@ gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject, Gst
+from TeeBin import TeeBin
 
-class Player:
+
+class LivePlayer:
     def __init__(self):
         self._in_ad_block = False
         self._last_ad_time = None
@@ -29,13 +31,19 @@ class Player:
         # Initialize GStreamer
         Gst.init(None)
 
+        self._tee_bin = TeeBin()
+
+        # When a recording branch is attached to tee, playback should be restarted
+        self._tee_bin.get_recorder().event_start += self.on_record_start
+
         # Create element to attenuate/amplify the signal
-        self._amplify = Gst.ElementFactory.make('audioamplify')
-        self._amplify.set_property('amplification', config.max_volume)
+        #self._amplify = Gst.ElementFactory.make('audioamplify')
+        #self._amplify.set_property('amplification', config.max_volume)
 
         # Create playbin and add the custom audio sink to it
         self._player = Gst.ElementFactory.make("playbin", "player")
-        self._player.set_property('audio_filter', self._amplify)
+        #self._player.set_property('audio_filter', self._amplify)
+        self._player.set_property('audio_filter', self._tee_bin.get_bin_element())
 
         # Listen for player events
         self._bus = self._player.get_bus()
@@ -53,6 +61,9 @@ class Player:
         of advertisement blocks
         """
 
+    def on_record_start(self, recorder):
+        self._player.set_state(Gst.State.PLAYING)
+
     @property
     def is_playing(self):
         state = self._player.get_state(100)[1]
@@ -64,11 +75,11 @@ class Player:
 
     @property
     def volume(self):
-        return self._amplify.get_property('amplification')
+        return self._tee_bin.amplification
 
     @volume.setter
     def volume(self, value):
-        self._amplify.set_property('amplification', value)
+        self._tee_bin.amplification = value
 
     def on_tag(self, bus, message):
         taglist = message.parse_tag()

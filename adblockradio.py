@@ -34,6 +34,7 @@ from player import Player
 class App(QtGui.QApplication):
     def __init__(self, argv):
         QtGui.QApplication.__init__(self, argv)
+        self.setQuitOnLastWindowClosed(False)
 
         self._widget = None
         self._icon = None
