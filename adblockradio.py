@@ -45,6 +45,10 @@ class App(QtGui.QApplication):
         self._player.event_state_change = self.on_state_change
         self._player.event_title_change = self.on_title_change
 
+        # Recorder is provided via player, as we want to get the live data streaming through the player
+        self._recorder = self._player.get_recorder()
+        self._recorder.event_change = self.on_state_change
+
     def init_tray_icon(self):
         self._widget = QtGui.QWidget()
         self._icon = systray.SystemTrayIcon(QtGui.QIcon("ui/playing.svg"), self._widget)
@@ -53,6 +57,7 @@ class App(QtGui.QApplication):
         self._icon.event_add_to_fav_click = self.on_add_to_fav_click
         self._icon.event_search_for_lyrics_click  = self.on_search_for_lyrics_click
         self._icon.event_blacklist_click = self.on_blacklist_click
+        self._icon.event_record_click = self.on_record_click
         self._icon.event_station_select = self.on_station_select
         self._icon.event_exit_click = self.on_exit_click
 
@@ -67,22 +72,32 @@ class App(QtGui.QApplication):
         sys.exit(self.exec_())
 
     def terminate(self):
+        if self._recorder.is_recording:
+            self._recorder.stop()
+
         self._player.stop()
         super().quit()
 
     def update_ui_state(self):
         if self._icon:
-            self._icon.update_ui_state(self._player.is_playing)
+            self._icon.update_ui_state(self._player.is_playing, self._recorder.is_recording)
 
     def update_ui_station(self):
         if self._icon:
             station_name = utils.get_station_name(self._player.current_uri)
             self._icon.update_ui_station(station_name)
 
+    def update_ui_title(self, title):
+        if self._icon:
+            self._icon.update_ui_title(title)
+
     def on_play_click(self, sender):
         self._player.play()
 
     def on_pause_click(self, sender):
+        if self._recorder.is_recording:
+            self._recorder.stop()
+
         self._player.stop()
 
     def on_add_to_fav_click(self, sender, value):
@@ -111,7 +126,37 @@ class App(QtGui.QApplication):
             # TODO: Add pattern to blacklist
             print("Blacklist %s" % pattern)
 
+    def on_record_click(self, sender, title):
+        print("Recording song %s" % title)
+        if self._recorder.is_recording:
+            self._recorder.stop()
+
+        filename = utils.sanitize_filename(title) + "." + config.recording["file_ext"].lstrip(".")
+        dir = os.path.join(userdata.get_data_dir(), "recorded/")
+        os.makedirs(dir, mode=0o777, exist_ok=True)
+        path = os.path.join(dir, filename)
+        if config.recording['prerecord']:
+            self._player.prerecord_release()
+        self._recorder.start(path)
+        self.update_ui_state()
+
+        add_to_favourites = QtGui.QMessageBox.question(
+            self._widget,
+            'Add to favourites?',
+            "Song %s will be recorded.\nDo you also want to add it to favourites list?" % title,
+            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No
+        )
+
+        if add_to_favourites == QtGui.QMessageBox.Yes:
+            FavouritesStorage.add_song(title)
+
     def on_station_select(self, sender, station):
+        if self._recorder.is_recording:
+            self._recorder.stop()
+        if config.recording['prerecord']:
+            self._player.prerecord_empty()
+            self._player.prerecord_hold()
+
         self._player.stop()
         self._player.play(station["uri"])
         self.update_ui_state()
@@ -127,8 +172,14 @@ class App(QtGui.QApplication):
         self.update_ui_station()
 
     def on_title_change(self, sender, title):
-        if self._icon:
-            self._icon.update_ui_title(title)
+        if self._recorder.is_recording:
+            self._recorder.stop()
+        if config.recording['prerecord']:
+            self._player.prerecord_empty()
+            self._player.prerecord_hold()
+
+        self.update_ui_state()
+        self.update_ui_title(title)
 
 
 class ConsoleApp:

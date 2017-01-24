@@ -3,6 +3,7 @@ import random
 
 import re
 import requests
+import unicodedata
 from PyQt4 import QtGui
 
 import config
@@ -72,3 +73,9 @@ def input_query(parent, title, prompt, default_value="", width=500, height=100):
     value = dlg.textValue()
     dlg.close()
     return value, ok
+
+
+def sanitize_filename(filename):
+    value = unicodedata.normalize('NFKC', filename)
+    value = re.sub(r'[^\w\s-]', '', value).strip().lower()
+    return re.sub(r'[-\s]+', '-', value)

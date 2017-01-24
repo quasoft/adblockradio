@@ -10,12 +10,14 @@ The player is currently using metadata tags, containing song title, to detect ad
 * PyQt4
 * python appdirs package
 * python-daemon package (only needed, if you want the player to run as console daemon)
+* python plac package
+* python obsub package
 
 ## How to install:
 
 1. Install GStreamer (for streaming audio):
 
-        sudo apt-get install gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+        sudo apt-get install gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good python3-gst-1.0
 
 2. Install PyQT4 (for system tray icon):
 
@@ -23,12 +25,12 @@ The player is currently using metadata tags, containing song title, to detect ad
 
 3. Install plac, appdirs and python-daemon (for daemonizing player)
 
-        pip install appdirs plac python-daemon
+        pip install appdirs plac python-daemon obsub
 
    or
 
         sudo apt-get install python3-pip
-        /usr/bin/python3 -m pip install appdirs plac python-daemon
+        /usr/bin/python3 -m pip install appdirs plac python-daemon obsub
 
 4. Download project:
 

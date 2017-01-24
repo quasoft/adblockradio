@@ -63,3 +63,21 @@ show_systray_tooltip = True
 show_song_title = True
 
 user_agent = 'iTunes/9.1.1'
+
+recording = {
+    'codec_name': 'lamemp3enc',
+    'codec_props': {'target': 1, 'bitrate': 128, 'cbr': 1},
+    'mux_name': 'id3mux',
+    'mux_props': {},
+    'file_ext': 'mp3',
+    'create_segments': True,
+    'prerecord': True
+}
+"""Dictionary with recording parameters:
+    codec_name (str): Name of GStreamer codec plugin to use for encoding of data before writing to file
+    codec_props (dict): Properties of GStreamer codec plugin
+    mux_name (str): Name of GStreamer mux plugin to use as file format
+    mux_props (dict): Properties of GStreamer mux plugin
+    file_ext (str): File extension for recorded files (should be related to muxer)
+    create_segments (bool): Specifies if a new segment should be created when creating a new file.
+"""

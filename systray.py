@@ -9,6 +9,7 @@ import config
 ICON_BLOCKED = "ui/blocked.svg"
 ICON_PLAYING = "ui/playing.svg"
 ICON_PAUSED = "ui/paused.svg"
+ICON_PLAYING_AND_RECORDING = "ui/playing_recording.svg"
 
 
 class SystemTrayIcon(QtGui.QSystemTrayIcon):
@@ -18,6 +19,7 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self.event_add_to_fav_click = None
         self.event_search_for_lyrics_click = None
         self.event_blacklist_click = None
+        self.event_record_click = None
         self.event_station_select = None
         self.event_exit_click = None
 
@@ -26,6 +28,7 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self._icon_blocked = QtGui.QIcon(ICON_BLOCKED)
         self._icon_playing = QtGui.QIcon(ICON_PLAYING)
         self._icon_paused = QtGui.QIcon(ICON_PAUSED)
+        self._icon_playing_and_recording = QtGui.QIcon(ICON_PLAYING_AND_RECORDING)
         self._last_icon = None
 
         self._last_tooltip = ""
@@ -37,10 +40,23 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
 
         menu.addSeparator()
         self._current_song_menu = menu.addMenu("Current song")
-        self._add_to_fav_action = self._current_song_menu.addAction("Add to favourites", self.on_add_to_fav_click)
-        self._search_for_lyrics_action = self._current_song_menu.addAction("Search for lyrics online", self.on_search_for_lyrics_click)
+        self._add_to_fav_action = self._current_song_menu.addAction(
+            "Add to favourites",
+            self.on_add_to_fav_click
+        )
+        self._search_for_lyrics_action = self._current_song_menu.addAction(
+            "Search for lyrics online", self.on_search_for_lyrics_click
+        )
         self._current_song_menu.addSeparator()
-        self._blacklist_action = self._current_song_menu.addAction("Mark as advertisement (Blacklist)", self.on_blacklist_click)
+        self._blacklist_action = self._current_song_menu.addAction(
+            "Mark as advertisement (Blacklist)",
+            self.on_blacklist_click
+        )
+        self._current_song_menu.addSeparator()
+        self._start_recording_action = self._current_song_menu.addAction(
+            "Record this song",
+            self.on_record_click
+        )
 
         menu.addSeparator()
         self._stations_menu = menu.addMenu("Stations")
@@ -79,14 +95,18 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         if self._last_song_title:
             self.fire_blacklist_click(self._last_song_title)
 
+    def on_record_click(self):
+        print("Record clicked:", self._last_song_title)
+        if self._last_song_title:
+            self.fire_record_click(self._last_song_title)
+
     def on_station_select(self, station):
         print("Station changed to '%s'" % station['name'])
         self.fire_station_select(station)
 
     def on_exit_click(self):
-        self.fire_exit_click()
         print("Exit clicked")
-        exit(0)
+        self.fire_exit_click()
 
     def on_icon_click(self, reason):
         if reason == QtGui.QSystemTrayIcon.Trigger:
@@ -113,6 +133,10 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         if self.event_blacklist_click:
             self.event_blacklist_click(self, song)
 
+    def fire_record_click(self, song):
+        if self.event_record_click:
+            self.event_record_click(self, song)
+
     def fire_station_select(self, station):
         if self.event_station_select:
             self.event_station_select(self, station)
@@ -121,8 +145,10 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         if self.event_exit_click:
             self.event_exit_click(self)
 
-    def update_ui_state(self, is_playing):
-        if is_playing:
+    def update_ui_state(self, is_playing, is_recording):
+        if is_playing and is_recording:
+            new_icon = self._icon_playing_and_recording
+        elif is_playing:
             new_icon = self._icon_playing
         else:
             new_icon = self._icon_paused
@@ -133,6 +159,9 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
 
         self._play_action.setVisible(not is_playing)
         self._pause_action.setVisible(is_playing)
+
+        self._start_recording_action.setText('Stop recording' if is_recording else 'Record this song')
+        self._start_recording_action.setEnabled(is_playing)
 
     def update_ui_station(self, station_name):
         if config.show_systray_tooltip:

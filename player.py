@@ -14,10 +14,10 @@ gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject, Gst
-from TeeBin import TeeBin
+from player_tee import PlayerTee
 
 
-class LivePlayer:
+class Player:
     def __init__(self):
         self._in_ad_block = False
         self._last_ad_time = None
@@ -31,10 +31,11 @@ class LivePlayer:
         # Initialize GStreamer
         Gst.init(None)
 
-        self._tee_bin = TeeBin()
+        self._tee_bin = PlayerTee()
 
         # When a recording branch is attached to tee, playback should be restarted
         self._tee_bin.get_recorder().event_start += self.on_record_start
+        self._tee_bin.get_recorder().event_stop += self.on_record_stop
 
         # Create element to attenuate/amplify the signal
         #self._amplify = Gst.ElementFactory.make('audioamplify')
@@ -61,8 +62,16 @@ class LivePlayer:
         of advertisement blocks
         """
 
+    def get_recorder(self):
+        return self._tee_bin.get_recorder()
+
     def on_record_start(self, recorder):
-        self._player.set_state(Gst.State.PLAYING)
+        if self.is_playing:
+            self._player.set_state(Gst.State.PLAYING)
+
+    def on_record_stop(self, recorder):
+        if self.is_playing:
+            self._player.set_state(Gst.State.PLAYING)
 
     @property
     def is_playing(self):
@@ -229,3 +238,15 @@ class LivePlayer:
 
         self._just_switched = True
         self._last_ad_time = time.time()
+
+    def prerecord_empty(self):
+        """Flush all data in record queue without passing it downstream"""
+        self._tee_bin.prerecord_empty()
+
+    def prerecord_hold(self):
+        """Start filling the prerecord buffer (up to 10 minutes of data)"""
+        self._tee_bin.prerecord_hold()
+
+    def prerecord_release(self):
+        """Stop filling prerecord buffer"""
+        self._tee_bin.prerecord_release()
