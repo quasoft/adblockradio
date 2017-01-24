@@ -126,7 +126,7 @@ class Player:
             print("Title changed to %s" % title)
 
             # If the title contains a blacklisted tag, reduce volume
-            if any(re.search(p, title, re.LOCALE) for p in config.blacklisted_tags):
+            if any(re.search(p, title, re.LOCALE) for p in config.blacklisted_tags if p.strip()):
                 if not self._in_ad_block:
                     print('Advertisement tag detected.')
                     if config.block_mode in (config.BlockMode.REDUCE_VOLUME, config.BlockMode.REDUCE_AND_SWITCH):
