@@ -51,3 +51,20 @@ class Storage:
             f.write(text + '\n')
 
         return True
+
+    @classmethod
+    def read_items(cls):
+        """Read all items in a list of strings
+        :rtype: list of strings
+        :return:
+        """
+        return cls.read().splitlines(keepends=False)
+
+    @classmethod
+    def write_items(cls, items):
+        """Save list items to file. This overwrites the existing file.
+        If the file does not exists, it is automatically created.
+        :param items: list of strings
+        """
+        text = "\n".join(items)
+        cls.overwrite(text)

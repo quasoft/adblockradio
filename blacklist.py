@@ -37,20 +37,3 @@ class BlacklistStorage(Storage):
         )
 
         return True
-
-    @classmethod
-    def read_list(cls):
-        """Read all blacklist patterns in list of strings
-        :rtype: list of strings
-        :return: 
-        """
-        return cls.read().splitlines(keepends=False)
-
-    @classmethod
-    def save_list(cls, items):
-        """Save blacklist pattern to file. This overwrites the existing file.
-        If the file does not exists, it is automatically created.
-        :param items: list of strings
-        """
-        text = "\n".join(items)
-        cls.overwrite(text)
