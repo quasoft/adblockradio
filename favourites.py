@@ -1,3 +1,5 @@
+from PyQt4 import QtGui
+
 from storage import Storage
 
 
@@ -13,4 +15,14 @@ class FavouritesStorage(Storage):
         if cls.is_song_added(title):
             return False
 
-        return cls.add_line(title)
+        if not cls.add_line(title):
+            return False
+
+        QtGui.QMessageBox.question(
+            None,
+            'Information',
+            "Song added to favourites list.",
+            QtGui.QMessageBox.Ok
+        )
+
+        return True
