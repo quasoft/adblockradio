@@ -4,7 +4,11 @@ import functools
 from PyQt4 import QtGui
 
 import config
-
+from blacklist import BlacklistStorage
+from favourites import FavouritesStorage
+from ui.dlg_blacklist_editor import DlgBlacklistEditor
+from ui.dlg_favourites_editor import DlgFavouritesEditor
+from ui.dlg_text_item_editor import DlgTextItemEditor
 
 ICON_BLOCKED = "ui/blocked.svg"
 ICON_PLAYING = "ui/playing.svg"
@@ -65,6 +69,17 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
             item.setCheckable(True)
 
         menu.addSeparator()
+        self._manage_menu = menu.addMenu("Manage")
+        self._manage_blacklist_action = self._manage_menu.addAction(
+            "Blacklist patterns...",
+            self.on_manage_blacklist_click
+        )
+        self._manage_favourites_action = self._manage_menu.addAction(
+            "Favourites...",
+            self.on_manage_favourites_click
+        )
+
+        menu.addSeparator()
         self._exit_action = menu.addAction("Exit", self.on_exit_click)
 
         self.setContextMenu(menu)
@@ -103,6 +118,20 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
     def on_station_select(self, station):
         print("Station changed to '%s'" % station['name'])
         self.fire_station_select(station)
+
+    def on_manage_blacklist_click(self):
+        editor = DlgBlacklistEditor(self.parent())
+        editor.set_items(BlacklistStorage.read_items())
+        editor.setModal(True)
+        editor.exec_()
+        BlacklistStorage.write_items(editor.get_items())
+
+    def on_manage_favourites_click(self):
+        editor = DlgFavouritesEditor(self.parent())
+        editor.set_items(FavouritesStorage.read_items())
+        editor.setModal(True)
+        editor.exec_()
+        FavouritesStorage.write_items(editor.get_items())
 
     def on_exit_click(self):
         print("Exit clicked")
