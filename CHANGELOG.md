@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
   This is achieved with prerecording currently playing song to memory. This prerecord buffer is added to file before recording starts.
 
 ### Changed
+- Update: Move blacklist configuration in separate file (.local/shared/adblockradio/blacklist.txt)
 - Fix: Do not terminate application when a dialog window is closed
+- Fix: Mark as advertisement (Blacklist) menu was not actually saving the pattern anywhere
 
 [Release 0.1]: https://github.com/quasoft/adblockradio/tree/0.1

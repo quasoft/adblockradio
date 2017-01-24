@@ -6,20 +6,6 @@ class BlockMode(Enum):
     SWITCH_STATION = 2
     REDUCE_AND_SWITCH = 3
 
-
-# Sample configuration of blacklisted tags:
-blacklisted_tags = [
-    '.*MYRADIO123.*',        # Block anything with title containing 'MYRADIO123' text (usually name of radio)
-    '^(?![\s\S])',           # Block anything that has no title
-    '.*HATE THAT SONG.*',    # Block a song with specific title 'HATE THAT SONG'
-]
-"""List of regular expressions with blacklisted tags. Blacklisted
-tags are used for detecting advertisement blocks, when the stream
-contains metadata with the song title.
-Often this title contains a fixed string during advertisement blocks,
-which makes it the ideal variant for detecting ads.
-"""
-
 block_mode = BlockMode.REDUCE_AND_SWITCH
 """Choose what should happen when an advertisement block is detected:
 

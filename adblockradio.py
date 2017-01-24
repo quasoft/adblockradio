@@ -16,6 +16,7 @@ import gi
 
 import userdata
 import utils
+from blacklist import BlacklistStorage
 from favourites import FavouritesStorage
 from state import StateStorage
 
@@ -121,10 +122,24 @@ class App(QtGui.QApplication):
 
             # Make sure the user entered a pattern that would not match spaces or an otherwise valid title
             if any(re.search(pattern, t, re.LOCALE) for t in ['', ' ', 'JUST SOME TEST', "\n"]):
+                QtGui.QMessageBox.question(
+                    None,
+                    'Warning',
+                    "Pattern rejected!\nIt is too broad and matches empty strings.",
+                    QtGui.QMessageBox.Ok
+                )
                 return
 
-            # TODO: Add pattern to blacklist
-            print("Blacklist %s" % pattern)
+            if BlacklistStorage.exists(pattern):
+                QtGui.QMessageBox.question(
+                    None,
+                    'Information',
+                    "Pattern already exists!",
+                    QtGui.QMessageBox.Ok
+                )
+                return
+
+            BlacklistStorage.add_pattern(pattern)
 
     def on_record_click(self, sender, title):
         print("Recording song %s" % title)
