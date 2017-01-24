@@ -3,7 +3,7 @@ import userdata
 
 
 class Storage:
-    filename = "last_station.txt"
+    filename = ""
 
     @classmethod
     def get_filepath(cls):
