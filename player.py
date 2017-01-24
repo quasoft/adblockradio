@@ -138,7 +138,7 @@ class Player:
                         self.switch_to_another_station()
             else:
                 if self._in_ad_block:
-                    print('Restoring voslume to maximum.')
+                    print('Restoring volume to maximum.')
                     if config.block_mode in (config.BlockMode.REDUCE_VOLUME, config.BlockMode.REDUCE_AND_SWITCH):
                         self.volume = config.max_volume
                     self._in_ad_block = False
