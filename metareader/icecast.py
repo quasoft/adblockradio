@@ -1,7 +1,6 @@
 import requests
 import re
-
-from metareader.base import BaseReader
+from .base import BaseReader
 
 
 class IcecastReader(BaseReader):
