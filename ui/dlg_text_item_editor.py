@@ -15,7 +15,7 @@ class DlgTextItemEditor(QDialog, Ui_TextItemEditor):
         self.setupUi(self)
         self.itemName = "Value"
         # Create an empty model for the list's data
-        self._model = QStandardItemModel(self.list_favourites)
+        self._model = QStandardItemModel(self.list_view)
 
     def setupUi(self, TextItemEditor):
         super().setupUi(TextItemEditor)
@@ -32,18 +32,18 @@ class DlgTextItemEditor(QDialog, Ui_TextItemEditor):
         for item in items:
             list_item = QStandardItem(item)
             self._model.appendRow(list_item)
-        self.list_favourites.setModel(self._model)
+        self.list_view.setModel(self._model)
 
     def on_add_click(self):
         item, ok = utils.input_query(None, "Adding %s" % self.itemName.lower(), self.itemName + ":")
         if ok:
             list_item = QStandardItem(item)
             self._model.appendRow(list_item)
-            self.list_favourites.setCurrentIndex(self._model.indexFromItem(list_item))
+            self.list_view.setCurrentIndex(self._model.indexFromItem(list_item))
             self.fire_add(item)
 
     def on_edit_click(self):
-        indexes = self.list_favourites.selectedIndexes()
+        indexes = self.list_view.selectedIndexes()
         index = indexes[0] if indexes else None
         if not index:
             QMessageBox.question(
@@ -65,7 +65,7 @@ class DlgTextItemEditor(QDialog, Ui_TextItemEditor):
             self.fire_edit(item)
 
     def on_delete_click(self):
-        indexes = self.list_favourites.selectedIndexes()
+        indexes = self.list_view.selectedIndexes()
         index = indexes[0] if indexes else None
         if not index:
             QMessageBox.question(
