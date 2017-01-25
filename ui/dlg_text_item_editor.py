@@ -34,6 +34,14 @@ class DlgTextItemEditor(QDialog, Ui_TextItemEditor):
             self._model.appendRow(list_item)
         self.list_view.setModel(self._model)
 
+    def get_selected(self):
+        indexes = self.list_view.selectedIndexes()
+        index = indexes[0] if indexes else None
+        if not index:
+            return None, None
+
+        return self._model.itemFromIndex(index).text(), index
+
     def on_add_click(self):
         item, ok = utils.input_query(None, "Adding %s" % self.itemName.lower(), self.itemName + ":")
         if ok:
@@ -43,30 +51,7 @@ class DlgTextItemEditor(QDialog, Ui_TextItemEditor):
             self.fire_add(item)
 
     def on_edit_click(self):
-        indexes = self.list_view.selectedIndexes()
-        index = indexes[0] if indexes else None
-        if not index:
-            QMessageBox.question(
-                None,
-                'Information',
-                "Select %s from list" % self.itemName,
-                QMessageBox.Ok
-            )
-            return
-
-        item, ok = utils.input_query(
-            None,
-            "Editing %s" % self.itemName.lower(),
-            self.itemName + ":",
-            self._model.itemFromIndex(index).text()
-        )
-        if ok:
-            self._model.itemFromIndex(index).setText(item)
-            self.fire_edit(item)
-
-    def on_delete_click(self):
-        indexes = self.list_view.selectedIndexes()
-        index = indexes[0] if indexes else None
+        text, index = self.get_selected()
         if not index:
             QMessageBox.question(
                 None,
@@ -76,16 +61,35 @@ class DlgTextItemEditor(QDialog, Ui_TextItemEditor):
             )
             return
 
-        item = self._model.itemFromIndex(index).text()
+        item, ok = utils.input_query(
+            None,
+            "Editing %s" % self.itemName.lower(),
+            self.itemName + ":",
+            text
+        )
+        if ok:
+            self._model.itemFromIndex(index).setText(item)
+            self.fire_edit(item)
 
-        shouldDelete = QMessageBox.question(
-            self,
+    def on_delete_click(self):
+        text, index = self.get_selected()
+        if not index:
+            QMessageBox.question(
+                None,
+                'Information',
+                "Select %s from list" % self.itemName.lower(),
+                QMessageBox.Ok
+            )
+            return
+
+        should_delete = QMessageBox.question(
+            None,
             "Deleting %s" % self.itemName.lower(),
-            "Delete '%s'?" % item,
+            "Delete '%s'?" % text,
             QMessageBox.Yes, QMessageBox.No
         )
-        if shouldDelete == QMessageBox.Yes:
-            self.fire_delete(item)
+        if should_delete == QMessageBox.Yes:
+            self.fire_delete(text)
             self._model.removeRow(index.row())
 
     @Event
