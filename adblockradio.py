@@ -6,8 +6,6 @@ import signal
 import time
 
 import re
-import urllib.parse
-import webbrowser
 
 import lockfile
 import threading
@@ -105,9 +103,7 @@ class App(QtGui.QApplication):
         FavouritesStorage.add_song(value)
 
     def on_search_for_lyrics_click(self, sender, value):
-        params = {'q': value}
-        url = 'http://search.azlyrics.com/search.php?' + urllib.parse.urlencode(params)
-        webbrowser.open(url)
+        utils.open_in_azlyrics(value)
 
     def on_blacklist_click(self, sender, value):
         # If value contains at least five characters (not spaces), consider this a valid pattern

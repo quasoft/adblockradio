@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import random
-
 import re
 import requests
 import unicodedata
 from PyQt4 import QtGui
+import urllib
+import webbrowser
 
 import config
 
@@ -79,3 +80,8 @@ def sanitize_filename(filename):
     value = unicodedata.normalize('NFKC', filename)
     value = re.sub(r'[^\w\s-]', '', value).strip().lower()
     return re.sub(r'[-\s]+', '-', value)
+
+def open_in_azlyrics(title):
+    params = {'q': title}
+    url = 'http://search.azlyrics.com/search.php?' + urllib.parse.urlencode(params)
+    webbrowser.open(url)
