@@ -94,7 +94,7 @@ class Player:
     def on_tag(self, bus, message):
         taglist = message.parse_tag()
 
-        if not self._meta_reader.is_running:
+        if not self._meta_reader or not self._meta_reader.is_running:
             title = taglist.get_string('title')
             if title and title.value:
                 title = title.value
