@@ -113,7 +113,10 @@ class Player:
             self.stop()
         elif t == Gst.MessageType.BUFFERING:
             # TODO: pause stream
+            # Check message.buffer_percent
             pass
+        elif t == Gst.MessageType.STATE_CHANGED:
+            self.fire_state_change()
 
     # Handle song metadata
     def on_title_read(self, sender, title):

@@ -39,6 +39,7 @@ class App(QtGui.QApplication):
         self._icon = None
         self.show_tray_icon = True
         self.last_uri = ""
+        self._is_closing = False
 
         self._player = Player()
         self._player.event_state_change = self.on_state_change
@@ -71,10 +72,9 @@ class App(QtGui.QApplication):
         sys.exit(self.exec_())
 
     def terminate(self):
-        if self._recorder.is_recording:
-            self._recorder.stop()
-
         self._player.stop()
+
+        self._is_closing = True
         super().quit()
 
     def update_ui_state(self):
@@ -94,10 +94,8 @@ class App(QtGui.QApplication):
         self._player.play()
 
     def on_pause_click(self, sender):
-        if self._recorder.is_recording:
-            self._recorder.stop()
-
         self._player.stop()
+        self.update_ui_title("")
 
     def on_add_to_fav_click(self, sender, value):
         FavouritesStorage.add_song(value)
@@ -167,6 +165,7 @@ class App(QtGui.QApplication):
             self._player.prerecord_hold()
 
         self._player.stop()
+        self.update_ui_title("")
         self._player.play(station["uri"])
         self.update_ui_state()
         self.update_ui_station()
@@ -177,10 +176,16 @@ class App(QtGui.QApplication):
         self.terminate()
 
     def on_state_change(self, sender):
+        if self._is_closing:
+            return
+
         self.update_ui_state()
         self.update_ui_station()
 
     def on_title_change(self, sender, title):
+        if self._is_closing:
+            return
+
         if self._recorder.is_recording and title != self._recorder.title:
             self._recorder.stop()
         if config.recording['prerecord']:

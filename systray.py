@@ -192,9 +192,6 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self._start_recording_action.setText('Stop recording' if is_recording else 'Record this song')
         self._start_recording_action.setEnabled(is_playing)
 
-        if not is_playing:
-            self.update_ui_title("")
-
     def update_ui_station(self, station_name):
         if config.show_systray_tooltip:
             if self._last_tooltip != station_name:
