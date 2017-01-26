@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 import gi
+import os
+
+import userdata
+import utils
+
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
 gi.require_version('Gtk', '3.0')
@@ -80,16 +85,22 @@ class Recorder:
         """
         return self._is_recording
 
-    def start(self, filename):
+    def start(self, title):
         """Start recording streaming data into audio file.
         Codec and format of file can be specified in config.py script.
-        :param filename: Full path to output file
+        :param title: Song title - used as filename
         :type filename: str
         """
+        self.title = title
+        filename = utils.sanitize_filename(self.title) + "." + config.recording["file_ext"].lstrip(".")
+        dir = os.path.join(userdata.get_data_dir(), "recorded/")
+        os.makedirs(dir, mode=0o777, exist_ok=True)
+        path = os.path.join(dir, filename)
+
         if self._is_recording:
             raise ValueError("Recording has already been started")
 
-        if not filename.strip():
+        if not path.strip():
             raise ValueError("Filename has not been specified")
 
         # Start recording
@@ -115,7 +126,7 @@ class Recorder:
 
         # Create filesink - the last element in pipeline that writes data to file
         self._filesink = Gst.ElementFactory.make('filesink')
-        self._filesink.set_property('location', filename)
+        self._filesink.set_property('location', path)
         self._filesink.set_property('async', 0)
         self._audio_sink.add(self._filesink)
         self._mux.link(self._filesink)
@@ -157,6 +168,7 @@ class Recorder:
         del self._codec
 
         self._is_recording = False
+        self.title = ""
 
         # Fire events
         self.event_stop()

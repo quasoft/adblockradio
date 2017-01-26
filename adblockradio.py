@@ -138,28 +138,26 @@ class App(QtGui.QApplication):
             BlacklistStorage.add_pattern(pattern)
 
     def on_record_click(self, sender, title):
-        print("Recording song %s" % title)
         if self._recorder.is_recording:
+            print("Stopping recording")
             self._recorder.stop()
+            self.update_ui_state()
+        else:
+            print("Recording song %s" % title)
+            self._recorder.start(title)
+            if config.recording['prerecord']:
+                self._player.prerecord_release()
+            self.update_ui_state()
 
-        filename = utils.sanitize_filename(title) + "." + config.recording["file_ext"].lstrip(".")
-        dir = os.path.join(userdata.get_data_dir(), "recorded/")
-        os.makedirs(dir, mode=0o777, exist_ok=True)
-        path = os.path.join(dir, filename)
-        if config.recording['prerecord']:
-            self._player.prerecord_release()
-        self._recorder.start(path)
-        self.update_ui_state()
+            add_to_favourites = QtGui.QMessageBox.question(
+                self._widget,
+                'Add to favourites?',
+                "Song %s will be recorded.\nDo you also want to add it to favourites list?" % title,
+                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No
+            )
 
-        add_to_favourites = QtGui.QMessageBox.question(
-            self._widget,
-            'Add to favourites?',
-            "Song %s will be recorded.\nDo you also want to add it to favourites list?" % title,
-            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No
-        )
-
-        if add_to_favourites == QtGui.QMessageBox.Yes:
-            FavouritesStorage.add_song(title)
+            if add_to_favourites == QtGui.QMessageBox.Yes:
+                FavouritesStorage.add_song(title)
 
     def on_station_select(self, sender, station):
         if self._recorder.is_recording:
@@ -183,7 +181,7 @@ class App(QtGui.QApplication):
         self.update_ui_station()
 
     def on_title_change(self, sender, title):
-        if self._recorder.is_recording:
+        if self._recorder.is_recording and title != self._recorder.title:
             self._recorder.stop()
         if config.recording['prerecord']:
             self._player.prerecord_empty()

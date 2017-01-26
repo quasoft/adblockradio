@@ -23,6 +23,7 @@ class Player:
         self._in_ad_block = False
         self._last_ad_time = None
         self._last_uri = ""
+        self._last_title = ""
         self._just_switched = True
         GObject.timeout_add(1000, self.on_timer_check_ad_duration)
 
@@ -116,7 +117,12 @@ class Player:
 
     # Handle song metadata
     def on_title_read(self, sender, title):
-        if title is not None:
+        if title is None:
+            return
+
+        if title != self._last_title:
+            self._last_title = title
+
             # TODO: Fade volume gradually
             # TODO: Allow user to choose what to do when an advertisement block is detected.
             #       Ideas for possible options:
@@ -184,6 +190,8 @@ class Player:
             self.event_title_change(self, title)
 
     def play(self, uri=""):
+        self._last_title = ""
+
         # Play last URI, if none provided
         if uri:
             self._last_uri = uri
@@ -214,6 +222,9 @@ class Player:
         self.fire_state_change()
 
     def stop(self):
+        if self.get_recorder().is_recording:
+           self.get_recorder().stop()
+
         # Stop metadata reader, if using one
         if self._meta_reader:
             self._meta_reader.stop()
@@ -224,6 +235,7 @@ class Player:
         self._in_ad_block = False
         self._last_ad_time = None
         self._just_switched = False
+        self._last_title = ""
 
         self.fire_state_change()
 
