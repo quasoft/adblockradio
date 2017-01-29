@@ -9,7 +9,6 @@ Detects advertisements by inspecting song titles inside stream metadata and swit
 * Python bindings for GStreamer
 * PyQt4
 * python appdirs package
-* python-daemon package (only needed, if you want the player to run as console daemon)
 * python plac package
 
 ## How to install:
@@ -27,7 +26,7 @@ Tested to work under Ubuntu 16.04 only. Might work on debian based distros too:
 3. Install python dependencies:
 
         sudo apt-get install python3-pip
-        /usr/bin/python3 -m pip install appdirs plac python-daemon lockfile requests urllib3
+        /usr/bin/python3 -m pip install appdirs plac requests urllib3
 
 4. Download project:
 
@@ -49,9 +48,13 @@ Tested to work under Ubuntu 16.04 only. Might work on debian based distros too:
 
    *You can add more radio stations to config.py file*
 
-8. Start player as daemon:
+8. Start player as console application:
 
         ./adblockradio.sh start
+
+9. Start player as daemon:
+
+        ./adblockradio.sh start &
 
    To stop daemon:
 

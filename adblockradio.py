@@ -80,7 +80,6 @@ class ConsoleApp:
 
 def main(
     station: ('URI to radio station (direct link, not playlist)', 'option', 's') = "",
-    daemon: ('Start radio as daemon', 'flag', 'd') = False,
     console: ('Start as console application', 'flag', 'c') = False
 ):
     """
@@ -104,24 +103,8 @@ def main(
     if not uri:
         raise ValueError('Specify radio station URI as start argument or add one in config.py file!')
 
-    # Start as daemon, if requested
-    if daemon:
-        import daemon as python_daemon
-        context = python_daemon.DaemonContext(
-            working_directory='/',
-            umask=2,
-            pidfile=lockfile.FileLock('/tmp/adblockradio')
-        )
-
-        app = ConsoleApp()
-        context.signal_map = {
-            signal.SIGTERM: app.terminate,
-            signal.SIGHUP: 'terminate'
-        }
-        with context:
-            app.run(uri)
-
-    elif console:
+    # Start as console app, if requested
+    if console:
         app = App(sys.argv)
         app.show_tray_icon = False
         app.run(uri)
