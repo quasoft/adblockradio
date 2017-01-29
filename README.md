@@ -1,6 +1,6 @@
 # AdBlockRadio - Internet radio player that blocks advertisements
 
-The player is currently using metadata tags, containing song title, to detect advertisement blocks.
+Detects advertisements by inspecting song titles inside stream metadata and switches automatically to another radio station, when an ad is detected.
 
 ## Requirements:
 
@@ -11,9 +11,10 @@ The player is currently using metadata tags, containing song title, to detect ad
 * python appdirs package
 * python-daemon package (only needed, if you want the player to run as console daemon)
 * python plac package
-* python obsub package
 
 ## How to install:
+
+Tested to work under Ubuntu 16.04 only. Might work on debian based distros too:
 
 1. Install GStreamer (for streaming audio):
 
@@ -23,14 +24,10 @@ The player is currently using metadata tags, containing song title, to detect ad
 
         sudo apt-get install python3-pyqt4
 
-3. Install plac, appdirs and python-daemon (for daemonizing player)
-
-        pip install appdirs plac python-daemon obsub
-
-   or
+3. Install python dependencies:
 
         sudo apt-get install python3-pip
-        /usr/bin/python3 -m pip install appdirs plac python-daemon obsub
+        /usr/bin/python3 -m pip install appdirs plac python-daemon lockfile requests urllib3
 
 4. Download project:
 
@@ -38,9 +35,11 @@ The player is currently using metadata tags, containing song title, to detect ad
         git clone https://github.com/quasoft/adblockradio.git
         cd adblockradio
 
-5. Edit list of radio stations and blacklisted tags in config.py
+5. Edit list of radio stations in config.py
 
-6. Start player in system tray:
+6. Add blacklist patterns for advertisements in `~/.local/share/adblockradio/blacklist.txt`
+
+7. Start player in system tray:
 
         /usr/bin/python3 adblockradio.py
 
@@ -50,7 +49,7 @@ The player is currently using metadata tags, containing song title, to detect ad
 
    *You can add more radio stations to config.py file*
 
-7. Start player as daemon:
+8. Start player as daemon:
 
         ./adblockradio.sh start
 
