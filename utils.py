@@ -9,6 +9,7 @@ import webbrowser
 
 import config
 
+MAX_SONG_TITLE_LENGTH = 35
 
 is_closing = False
 """This flag is set to True when the application begins to shut down.
@@ -104,7 +105,29 @@ def sanitize_filename(filename):
     value = re.sub(r'[^\w\s-]', '', value).strip().lower()
     return re.sub(r'[-\s]+', '-', value)
 
+
 def open_in_azlyrics(title):
     params = {'q': title}
     url = 'http://search.azlyrics.com/search.php?' + urllib.parse.urlencode(params)
     webbrowser.open(url)
+
+
+def truncate_song_title(title):
+    value = title.strip()
+
+    # If the title is too long, leave the part after the last delimiter (dash)
+    if len(value) > MAX_SONG_TITLE_LENGTH - 3:
+        parts = re.split(':|;|-', value)
+        value = '...' + parts[-1] if len(parts) > 1 else value
+        print(value)
+        print(parts)
+
+    # If the title is still too long, remove text in brackets
+    if len(value) > MAX_SONG_TITLE_LENGTH - 3:
+        value = re.sub('[(]+[\w\s]+[)]+', '...', value)
+
+    # If the title is still too long, just trim the beginning
+    if len(value) > MAX_SONG_TITLE_LENGTH - 3:
+        value = value[:MAX_SONG_TITLE_LENGTH] + '...'
+
+    return value

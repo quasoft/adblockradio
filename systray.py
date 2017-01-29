@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import re
 import sys
 import functools
 from PyQt4 import QtGui
@@ -223,5 +224,5 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
 
         if config.show_song_title:
             if self._last_song_title != title:
-                self._current_song_menu.setTitle('Current song: %s' % title)
+                self._current_song_menu.setTitle('Current song: %s' % utils.truncate_song_title(title))
                 self._last_song_title = title
