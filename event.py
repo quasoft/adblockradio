@@ -13,12 +13,12 @@ class Event(object):
         except KeyError:
             be = obj.__dict__[self._key] = BoundEvent()
 
-            def fire_method(obj, *args, **kargs):
-                be(obj, *args, **kargs)
-
-            fire_method.__doc__ = "Fire method for event '%s'" % self._key
-            fire_method.__name__ = self._func_name.replace("event_", "fire_", 1)
-            setattr(obj, fire_method.__name__, fire_method)
+            if self._func_name.startswith('event_'):
+                def fire_method(obj, *args, **kargs):
+                    be(obj, *args, **kargs)
+                fire_method.__doc__ = "Fire method for event '%s'" % self._key
+                fire_method.__name__ = self._func_name.replace("event_", "fire_", 1)
+                setattr(obj, fire_method.__name__, fire_method)
 
             return be
 
