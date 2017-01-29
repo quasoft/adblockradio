@@ -13,7 +13,7 @@ class IcecastReader(BaseReader):
             self._uri,
             headers={
                 'User-Agent': self.user_agent,
-                'Icy-MetaData': 1
+                'Icy-MetaData': '1'
             },
             stream=True
         )
