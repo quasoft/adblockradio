@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 DAEMON=adblockradio.py
 PIDFILE=/tmp/adblockradio.lock
