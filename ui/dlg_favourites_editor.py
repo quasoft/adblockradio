@@ -1,7 +1,5 @@
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QAction
-from PyQt4.QtCore import SIGNAL
-
 import utils
 from .dlg_text_item_editor import DlgTextItemEditor
 
