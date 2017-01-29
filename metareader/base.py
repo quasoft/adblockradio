@@ -3,6 +3,7 @@ from threading import Thread, Event
 from PyQt4 import QtCore
 
 import utils
+import event
 
 
 class BaseReader(QtCore.QObject):
@@ -18,7 +19,6 @@ class BaseReader(QtCore.QObject):
 
         self._stopFlag = Event()
         self._thread = None
-        self.event_title_read = None
         self.signal_title_read.connect(self._slot_title_read)
 
     @property
@@ -47,11 +47,11 @@ class BaseReader(QtCore.QObject):
         #         break
 
     def _slot_title_read(self, title):
-        self._fire_title_read(title)
+        self.event_title_read(title)
 
-    def _fire_title_read(self, title):
-        if self.event_title_read:
-            self.event_title_read(self, title)
+    @event.Event
+    def event_title_read(self, title):
+        pass
 
     # Descendants should use the emit_title_read method to signal for a new title.
     # _slot_title_read and _fire_title_read are used internally in base class for synchronization

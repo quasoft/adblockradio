@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
-import threading
 import re
-import random
-
+import threading
 import time
-
-import utils
-from blacklist import BlacklistStorage
-from metareader.icecast import IcecastReader
-import config
-
 import gi
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject, Gst
+
+import config
+import dispatchers
+import utils
+from blacklist import BlacklistStorage
+from metareader.icecast import IcecastReader
 from player_tee import PlayerTee
 
 
@@ -27,25 +25,13 @@ class Player:
         self._just_switched = True
         GObject.timeout_add(1000, self.on_timer_check_ad_duration)
 
-        self.event_state_change = None
-        self.event_title_change = None
-
         # Initialize GStreamer
         Gst.init(None)
 
         self._tee_bin = PlayerTee()
 
-        # When a recording branch is attached to tee, playback should be restarted
-        self._tee_bin.get_recorder().event_start += self.on_record_start
-        self._tee_bin.get_recorder().event_stop += self.on_record_stop
-
-        # Create element to attenuate/amplify the signal
-        #self._amplify = Gst.ElementFactory.make('audioamplify')
-        #self._amplify.set_property('amplification', config.max_volume)
-
         # Create playbin and add the custom audio sink to it
         self._player = Gst.ElementFactory.make("playbin", "player")
-        #self._player.set_property('audio_filter', self._amplify)
         self._player.set_property('audio_filter', self._tee_bin.get_bin_element())
 
         # Listen for player events
@@ -63,17 +49,14 @@ class Player:
         configured. Those tags are used to detect beginning and ending
         of advertisement blocks
         """
+        dispatchers.player.play_clicked += self.play
+        dispatchers.player.pause_clicked += self.stop
+        dispatchers.player.change_station_clicked += self.on_change_station_clicked
+        dispatchers.recorder.recording_started += self.on_recording_started
+        dispatchers.recorder.recording_stopped += self.on_recording_stopped
 
     def get_recorder(self):
         return self._tee_bin.get_recorder()
-
-    def on_record_start(self, recorder):
-        if self.is_playing:
-            self._player.set_state(Gst.State.PLAYING)
-
-    def on_record_stop(self, recorder):
-        if self.is_playing:
-            self._player.set_state(Gst.State.PLAYING)
 
     @property
     def is_playing(self):
@@ -100,7 +83,7 @@ class Player:
             if title and title.value:
                 title = title.value
                 title = title.strip(" \"'")
-                self.on_title_read(self, title)
+                self.on_title_read(title)
 
     def on_message(self, bus, message):
         t = message.type
@@ -119,7 +102,9 @@ class Player:
             self.fire_state_change()
 
     # Handle song metadata
-    def on_title_read(self, sender, title):
+    def on_title_read(self, title):
+        assert threading.current_thread() == threading.main_thread()
+
         if title is None:
             return
 
@@ -136,7 +121,7 @@ class Player:
             print("Title changed to %s" % title)
 
             # If the title contains a blacklisted tag, reduce volume
-            if any(re.search(p, title, re.LOCALE) for p in BlacklistStorage.read_items() if p.strip()):
+            if BlacklistStorage.is_blacklisted(title):
                 if not self._in_ad_block:
                     print('Advertisement tag detected.')
                     if config.block_mode in (config.BlockMode.REDUCE_VOLUME, config.BlockMode.REDUCE_AND_SWITCH):
@@ -155,7 +140,7 @@ class Player:
                     self._last_ad_time = None
                     self._just_switched = False
 
-            self.fire_title_change(title)
+            dispatchers.player.song_changed(title)
 
     def on_timer_check_ad_duration(self):
         if not self._last_ad_time:
@@ -185,20 +170,14 @@ class Player:
         return True
 
     def fire_state_change(self):
-        if self.event_state_change:
-            self.event_state_change(self)
-
-    def fire_title_change(self, title):
-        if self.event_title_change:
-            self.event_title_change(self, title)
+        assert threading.current_thread() == threading.main_thread()
+        dispatchers.player.playing_state_changed(self.is_playing)
 
     def play(self, uri=""):
         self._last_title = ""
 
         # Play last URI, if none provided
-        if uri:
-            self._last_uri = uri
-        else:
+        if not uri:
             uri = self._last_uri
 
         # Automatically extract uri to stream from m3u playlists
@@ -215,14 +194,18 @@ class Player:
         # Reset volume level
         self.volume = config.max_volume
 
-        if len(BlacklistStorage.read_items()) > 0:
+        if not BlacklistStorage.is_empty():
             # TODO: Determine server type and use different reader for each
             self._meta_reader = IcecastReader(uri)
             self._meta_reader.user_agent = config.user_agent
-            self._meta_reader.event_title_read = self.on_title_read
+            self._meta_reader.event_title_read += self.on_title_read
             self._meta_reader.start()
 
         self.fire_state_change()
+
+        if uri != self._last_uri:
+            self._last_uri = uri
+            dispatchers.player.station_changed(utils.get_station(uri))
 
     def stop(self):
         if self.get_recorder().is_recording:
@@ -244,7 +227,7 @@ class Player:
 
     def switch_to_another_station(self):
         print('Switching to another station.')
-        other_stations = list(filter(lambda s: s['uri'] != self._last_uri, config.stations))
+        other_stations = utils.get_other_stations(self._last_uri)
         station = utils.get_random_station(other_stations)
 
         print("Station chosen: %s" % station['name'])
@@ -255,14 +238,25 @@ class Player:
         self._just_switched = True
         self._last_ad_time = time.time()
 
-    def prerecord_empty(self):
-        """Flush all data in record queue without passing it downstream"""
-        self._tee_bin.prerecord_empty()
+        dispatchers.player.station_changed(station)
 
-    def prerecord_hold(self):
-        """Start filling the prerecord buffer (up to 10 minutes of data)"""
-        self._tee_bin.prerecord_hold()
+    def on_change_station_clicked(self, station):
+        self.stop()
+        self.play(station["uri"])
 
-    def prerecord_release(self):
-        """Stop filling prerecord buffer"""
-        self._tee_bin.prerecord_release()
+        dispatchers.player.station_changed(station)
+
+    def on_recording_started(self, title):
+        if config.recording['prerecord']:
+            # Flush prebuffered part of song to file
+            self._tee_bin.prerecord_release()
+        # When a recording branch is attached to tee, playback should be restarted
+        if self.is_playing:
+            self._player.set_state(Gst.State.PLAYING)
+
+    def on_recording_stopped(self):
+        if config.recording['prerecord']:
+            self._tee_bin.prerecord_empty()
+            self._tee_bin.prerecord_hold()
+        if self.is_playing:
+            self._player.set_state(Gst.State.PLAYING)

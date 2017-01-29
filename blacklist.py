@@ -1,6 +1,11 @@
+import re
+
 from PyQt4 import QtGui
 
+import dispatchers
+import utils
 from storage import Storage
+from ui.dlg_blacklist_editor import DlgBlacklistEditor
 
 
 class BlacklistStorage(Storage):
@@ -37,3 +42,55 @@ class BlacklistStorage(Storage):
         )
 
         return True
+
+    @classmethod
+    def is_blacklisted(cls, value):
+        return any(re.search(p, value, re.LOCALE) for p in cls.read_items() if p.strip())
+
+    @classmethod
+    def manage(cls):
+        editor = DlgBlacklistEditor(None)
+        editor.set_items(BlacklistStorage.read_items())
+        editor.setModal(True)
+        editor.exec_()
+        BlacklistStorage.write_items(editor.get_items())
+
+    @classmethod
+    def add_song_title(cls, title):
+        value = title.strip()
+        # If value contains at least five characters (not spaces), consider this a valid pattern
+        if not utils.is_valid_blacklist_pattern(value):
+            return
+
+        # Construct regex pattern from value: '.*value.*'
+        pattern = '.*' + value + '.*'
+
+        # Ask user to modify pattern, if wanted
+        pattern, ok = utils.input_query(None, "Mark as advertisement - blacklist meta title", "Regex pattern:", pattern)
+        if not ok:
+            return
+
+        # Make sure the user entered a pattern that would not match spaces or an otherwise valid title
+        if not utils.is_valid_blacklist_pattern(pattern):
+            QtGui.QMessageBox.question(
+                None,
+                'Warning',
+                "Pattern rejected!\nIt is too broad and matches empty strings.",
+                QtGui.QMessageBox.Ok
+            )
+            return
+
+        if cls.exists(pattern):
+            QtGui.QMessageBox.question(
+                None,
+                'Information',
+                "Pattern already exists!",
+                QtGui.QMessageBox.Ok
+            )
+            return
+
+        cls.add_pattern(pattern)
+
+
+dispatchers.storage.blacklist_song_clicked += BlacklistStorage.add_song_title
+dispatchers.storage.manage_blacklist_clicked += BlacklistStorage.manage

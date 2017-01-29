@@ -1,3 +1,4 @@
+import dispatchers
 from storage import Storage
 
 
@@ -12,3 +13,4 @@ class StateStorage(Storage):
     def set_last_station(cls, value):
         cls.overwrite(value)
 
+dispatchers.player.change_station_clicked += lambda station: StateStorage.set_last_station(station["uri"])

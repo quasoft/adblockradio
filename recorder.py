@@ -1,18 +1,15 @@
 #!/usr/bin/env python3
-import gi
 import os
-
-import userdata
-import utils
-
+import gi
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject, Gst
 
-from obsub import event
-
 import config
+import dispatchers
+import userdata
+import utils
 
 
 class Recorder:
@@ -44,6 +41,12 @@ class Recorder:
         self._codec = None
         self._mux = None
         self._filesink = None
+        self.title = None
+
+        dispatchers.recorder.start_record_clicked += self.start
+        dispatchers.recorder.stop_record_clicked += self.stop
+        dispatchers.player.change_station_clicked += lambda station: self.stop()
+        dispatchers.player.song_changed += self.on_song_changed
 
     def get_src_element(self):
         """Returns the first element in the recording pipeline
@@ -135,12 +138,12 @@ class Recorder:
         self._valve.set_property('drop', 0)
 
         # Fire events
-        self.event_start()
-        self.event_change()
+        dispatchers.recorder.recording_started(self.title)
+        dispatchers.recorder.recording_state_changed(self._is_recording)
 
     def stop(self):
         if not self._is_recording:
-            raise ValueError("Recording has not been started")
+            return
 
         # Send an EOS event to codec and mux to signal those elements that encoding/writing to file should stop
         self._codec.send_event(Gst.Event.new_eos())
@@ -171,17 +174,9 @@ class Recorder:
         self.title = ""
 
         # Fire events
-        self.event_stop()
-        self.event_change()
+        dispatchers.recorder.recording_stopped()
+        dispatchers.recorder.recording_state_changed(self._is_recording)
 
-    @event
-    def event_start(self):
-        """Event fired after recording has started"""
-
-    @event
-    def event_stop(self):
-        """Event fired after recording has stopped"""
-
-    @event
-    def event_change(self):
-        """Event fired if recording state has changed"""
+    def on_song_changed(self, title):
+        if self._is_recording and title != self.title:
+            self.stop()

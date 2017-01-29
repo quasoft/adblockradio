@@ -10,9 +10,25 @@ import webbrowser
 import config
 
 
+is_closing = False
+"""This flag is set to True when the application begins to shut down.
+   Parts of the program that handle events might use this flag as a
+   signal to ignore some events like change of player state.
+"""
+
+
+def get_other_stations(uri):
+    return list(filter(lambda s: s['uri'] != uri, config.stations))
+
+
 def get_random_station(stations):
     random_idx = random.randint(0, len(stations) - 1)
     return stations[random_idx]
+
+
+def get_station(uri):
+    station = next(filter(lambda s: s['uri'] == uri, config.stations), None)
+    return station
 
 
 def get_station_name(uri):
@@ -50,7 +66,14 @@ def is_valid_blacklist_pattern(pattern):
     :return: True if pattern is valid
     """
     matches = re.findall('[\S]+', pattern, re.LOCALE)
-    return len(matches) >= 5
+
+    if len(matches) < 5:
+        return False
+
+    if any(re.search(pattern, t, re.LOCALE) for t in ['', ' ', 'JUST SOME TEST', "\n"]):
+        return False
+
+    return True
 
 
 def input_query(parent, title, prompt, default_value="", width=500, height=100):

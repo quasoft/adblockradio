@@ -48,7 +48,7 @@ class DlgTextItemEditor(QDialog, Ui_TextItemEditor):
             list_item = QStandardItem(item)
             self._model.appendRow(list_item)
             self.list_view.setCurrentIndex(self._model.indexFromItem(list_item))
-            self.fire_add(item)
+            self.event_add(item)
 
     def on_edit_click(self):
         text, index = self.get_selected()
@@ -69,7 +69,7 @@ class DlgTextItemEditor(QDialog, Ui_TextItemEditor):
         )
         if ok:
             self._model.itemFromIndex(index).setText(item)
-            self.fire_edit(item)
+            self.event_edit(item)
 
     def on_delete_click(self):
         text, index = self.get_selected()
@@ -89,7 +89,7 @@ class DlgTextItemEditor(QDialog, Ui_TextItemEditor):
             QMessageBox.Yes, QMessageBox.No
         )
         if should_delete == QMessageBox.Yes:
-            self.fire_delete(text)
+            self.event_delete(text)
             self._model.removeRow(index.row())
 
     @Event

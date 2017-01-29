@@ -4,28 +4,20 @@ import functools
 from PyQt4 import QtGui
 
 import config
-from blacklist import BlacklistStorage
-from favourites import FavouritesStorage
-from ui.dlg_blacklist_editor import DlgBlacklistEditor
-from ui.dlg_favourites_editor import DlgFavouritesEditor
-from ui.dlg_text_item_editor import DlgTextItemEditor
+import dispatchers
+import utils
 
-ICON_BLOCKED = "ui/blocked.svg"
-ICON_PLAYING = "ui/playing.svg"
-ICON_PAUSED = "ui/paused.svg"
-ICON_PLAYING_AND_RECORDING = "ui/playing_recording.svg"
+ICON_PATH = "ui/"
+ICON_BLOCKED = ICON_PATH + "blocked.svg"
+ICON_PLAYING = ICON_PATH + "playing.svg"
+ICON_PAUSED = ICON_PATH + "paused.svg"
+ICON_PLAYING_AND_RECORDING = ICON_PATH + "playing_recording.svg"
 
 
 class SystemTrayIcon(QtGui.QSystemTrayIcon):
     def __init__(self, icon, parent=None):
-        self.event_play_click = None
-        self.event_pause_click = None
-        self.event_add_to_fav_click = None
-        self.event_search_for_lyrics_click = None
-        self.event_blacklist_click = None
-        self.event_record_click = None
-        self.event_station_select = None
-        self.event_exit_click = None
+        self._is_playing = False
+        self._is_recording = False
 
         QtGui.QSystemTrayIcon.__init__(self, icon, parent)
 
@@ -87,97 +79,118 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self.activated.connect(self.on_icon_click)
         self.show()
 
+        dispatchers.player.station_changed += self.on_station_changed
+        dispatchers.player.playing_state_changed += self.on_playing_state_changed
+        dispatchers.player.song_changed += self.on_song_changed
+        dispatchers.recorder.recording_stopped += self.on_recording_stopped
+        dispatchers.recorder.recording_state_changed += self.on_recording_state_changed
+
     def on_play_click(self):
         print("Play clicked")
-        self.fire_play_click()
+        dispatchers.player.play_clicked()
 
     def on_pause_click(self):
         print("Pause clicked")
-        self.fire_pause_click()
+        dispatchers.player.pause_clicked()
 
     def on_add_to_fav_click(self):
         print("Add to favourites clicked:", self._last_song_title)
         if self._last_song_title:
-            self.fire_add_to_fav_click(self._last_song_title)
+            dispatchers.storage.add_to_favourites_clicked(self._last_song_title)
 
     def on_search_for_lyrics_click(self):
         print("Search for lyrics clicked:", self._last_song_title)
         if self._last_song_title:
-            self.fire_search_for_lyrics_click(self._last_song_title)
+            utils.open_in_azlyrics(self._last_song_title)
 
     def on_blacklist_click(self):
         print("Blacklist clicked:", self._last_song_title)
         if self._last_song_title:
-            self.fire_blacklist_click(self._last_song_title)
+            dispatchers.storage.blacklist_song_clicked(self._last_song_title)
 
     def on_record_click(self):
-        print("Record clicked:", self._last_song_title)
-        if self._last_song_title:
-            self.fire_record_click(self._last_song_title)
+        if self._is_recording:
+            print("Stop recording clicked")
+            dispatchers.recorder.stop_record_clicked()
+        else:
+            print("Start recording clicked:", self._last_song_title)
+            if self._last_song_title:
+                dispatchers.recorder.start_record_clicked(self._last_song_title)
+
+                add_to_favourites = QtGui.QMessageBox.question(
+                    None,
+                    'Add to favourites?',
+                    "Song '%s' will be recorded.\nAdd song to favourites?" % self._last_song_title,
+                    QtGui.QMessageBox.Yes, QtGui.QMessageBox.No
+                )
+                if add_to_favourites == QtGui.QMessageBox.Yes:
+                    dispatchers.storage.add_to_favourites_clicked(self._last_song_title)
 
     def on_station_select(self, station):
         print("Station changed to '%s'" % station['name'])
-        self.fire_station_select(station)
+        self.update_ui_title("")
+        dispatchers.player.change_station_clicked(station)
 
     def on_manage_blacklist_click(self):
-        editor = DlgBlacklistEditor(self.parent())
-        editor.set_items(BlacklistStorage.read_items())
-        editor.setModal(True)
-        editor.exec_()
-        BlacklistStorage.write_items(editor.get_items())
+        dispatchers.storage.manage_blacklist_clicked()
 
     def on_manage_favourites_click(self):
-        editor = DlgFavouritesEditor(self.parent())
-        editor.set_items(FavouritesStorage.read_items())
-        editor.setModal(True)
-        editor.exec_()
-        FavouritesStorage.write_items(editor.get_items())
+        dispatchers.storage.manage_favourites_clicked()
 
     def on_exit_click(self):
         print("Exit clicked")
-        self.fire_exit_click()
+        dispatchers.app.exit_clicked()
 
     def on_icon_click(self, reason):
         if reason == QtGui.QSystemTrayIcon.Trigger:
             print("System tray icon clicked")
             # TODO: Toggle play/pause
 
-    def fire_play_click(self):
-        if self.event_play_click:
-            self.event_play_click(self)
+    def on_station_changed(self, station):
+        if utils.is_closing:
+            return
 
-    def fire_pause_click(self):
-        if self.event_pause_click:
-            self.event_pause_click(self)
+        station_name = station['name'] if station else ''
+        self.update_ui_station(station_name)
 
-    def fire_add_to_fav_click(self, song):
-        if self.event_add_to_fav_click:
-            self.event_add_to_fav_click(self, song)
+    def on_playing_state_changed(self, new_state):
+        if utils.is_closing:
+            return
 
-    def fire_search_for_lyrics_click(self, song):
-        if self.event_search_for_lyrics_click:
-            self.event_search_for_lyrics_click(self, song)
+        self.update_ui_state(is_playing=new_state)
 
-    def fire_blacklist_click(self, song):
-        if self.event_blacklist_click:
-            self.event_blacklist_click(self, song)
+    def on_song_changed(self, title):
+        if utils.is_closing:
+            return
 
-    def fire_record_click(self, song):
-        if self.event_record_click:
-            self.event_record_click(self, song)
+        self.update_ui_state()
+        self.update_ui_title(title)
 
-    def fire_station_select(self, station):
-        if self.event_station_select:
-            self.event_station_select(self, station)
+    def on_recording_stopped(self):
+        if utils.is_closing:
+            return
 
-    def fire_exit_click(self):
-        if self.event_exit_click:
-            self.event_exit_click(self)
+        self.update_ui_title("")
 
-    def update_ui_state(self, is_playing, is_recording):
-        if is_playing and is_recording:
+    def on_recording_state_changed(self, new_state):
+        if utils.is_closing:
+            return
+
+        self.update_ui_state(is_recording=new_state)
+
+    def update_ui_state(self, **kwargs):
+        if utils.is_closing:
+            return
+
+        if 'is_playing' in kwargs:
+            self._is_playing = kwargs['is_playing']
+
+        if 'is_recording' in kwargs:
+            self._is_recording = kwargs['is_recording']
+
+        if self._is_playing and self._is_recording:
             new_icon = self._icon_playing_and_recording
-        elif is_playing:
+        elif self._is_playing:
             new_icon = self._icon_playing
         else:
             new_icon = self._icon_paused
@@ -186,13 +199,16 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
             self.setIcon(new_icon)
             self._last_icon = new_icon
 
-        self._play_action.setVisible(not is_playing)
-        self._pause_action.setVisible(is_playing)
+        self._play_action.setVisible(not self._is_playing)
+        self._pause_action.setVisible(self._is_playing)
 
-        self._start_recording_action.setText('Stop recording' if is_recording else 'Record this song')
-        self._start_recording_action.setEnabled(is_playing)
+        self._start_recording_action.setText('Stop recording' if self._is_recording else 'Record this song')
+        self._start_recording_action.setEnabled(self._is_playing)
 
     def update_ui_station(self, station_name):
+        if utils.is_closing:
+            return
+
         if config.show_systray_tooltip:
             if self._last_tooltip != station_name:
                 self.setToolTip(station_name)
@@ -202,33 +218,10 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
             item.setChecked(item.text() == station_name)
 
     def update_ui_title(self, title):
+        if utils.is_closing:
+            return
+
         if config.show_song_title:
             if self._last_song_title != title:
                 self._current_song_menu.setTitle('Current song: %s' % title)
                 self._last_song_title = title
-
-
-class SystemTrayApp:
-    def __init__(self):
-        self.event_exit_app = None
-        """Called when the user clicks the Exit option from the system tray context menu"""
-
-        self._app = QtGui.QApplication(sys.argv)
-        self._widget = QtGui.QWidget()
-        self._icon = SystemTrayIcon(QtGui.QIcon(ICON_PLAYING), self._widget)
-        self._icon.event_exit_click = self.on_exit_click
-
-    def run(self):
-        sys.exit(self._app.exec_())
-
-    def fire_exit_app(self):
-        if self.event_exit_app:
-            self.event_exit_app(self)
-
-    def on_exit_click(self, sender):
-        self.fire_exit_app()
-
-
-if __name__ == '__main__':
-    app = SystemTrayApp()
-    app.run()

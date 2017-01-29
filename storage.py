@@ -1,4 +1,5 @@
 import os
+
 import userdata
 
 
@@ -68,3 +69,7 @@ class Storage:
         """
         text = "\n".join(items)
         cls.overwrite(text)
+
+    @classmethod
+    def is_empty(cls):
+        return len(cls.read_items()) == 0
