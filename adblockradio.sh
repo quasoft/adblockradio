@@ -10,7 +10,18 @@ case "$1" in
         /usr/bin/python3 $DAEMON --daemon
     ;;
     stop)
-        for pid in $(ps x | grep adblockradio.py | awk '{print $1}'); do kill $pid; done
+        for pid in $(ps x | grep -v "grep" | grep adblockradio.py | awk '{print $1}')
+        do
+            if [[ $pid =~ ^-?[0-9]+$ ]]; then
+                # Send SIGTERM
+                kill $pid
+
+                sleep 1
+
+                # Send SIGTERM again
+                kill $pid
+            fi
+        done
     ;;
     *)
         echo "usage: adblockradio.sh {start|stop}"
