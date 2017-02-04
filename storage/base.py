@@ -1,6 +1,7 @@
 import os
 
 from . import userdata
+from . import utils
 
 
 class BaseStorage:
@@ -48,7 +49,14 @@ class BaseStorage:
 
     @classmethod
     def add_line(cls, text):
+        # Check if last line ends with a newline character
+        last_char = utils.get_last_utf8_char(cls.get_filepath(), False)
+        needs_newline = last_char and last_char not in '\r\n'
+
         with cls.open('a+') as f:
+            # Add newline character on previous line, if necessary
+            if needs_newline:
+                f.write('\n')
             f.write(text + '\n')
 
         return True
