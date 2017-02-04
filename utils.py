@@ -4,7 +4,6 @@ import re
 import requests
 import unicodedata
 from PyQt4 import QtGui
-import urllib
 import webbrowser
 
 import config
@@ -108,7 +107,8 @@ def sanitize_filename(filename):
 
 def open_in_azlyrics(title):
     params = {'q': title}
-    url = 'http://search.azlyrics.com/search.php?' + urllib.parse.urlencode(params)
+    base = 'http://search.azlyrics.com/search.php'
+    url = requests.Request('GET', base, params=params).prepare().url
     webbrowser.open(url)
 
 

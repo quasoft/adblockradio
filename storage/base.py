@@ -1,6 +1,6 @@
 import os
 
-import userdata
+from .storage import userdata
 
 
 class Storage:
