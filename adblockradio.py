@@ -34,6 +34,11 @@ class App(QtGui.QApplication):
 
         dispatchers.app.exit_clicked += self.on_exit_click
 
+        # Keep IDE from removing those ununsed imports
+        StateStorage()
+        BlacklistStorage()
+        FavouritesStorage()
+
     def init_tray_icon(self):
         self._widget = QtGui.QWidget()
         self._icon = systray.SystemTrayIcon(QtGui.QIcon("ui/playing.svg"), self._widget)
