@@ -14,7 +14,7 @@ from PyQt4 import QtGui
 import config
 import dispatchers
 import utils
-import systray
+from ui import systray
 from storage.state import StateStorage
 from storage.blacklist import BlacklistStorage
 from storage.favourites import FavouritesStorage
@@ -41,7 +41,7 @@ class App(QtGui.QApplication):
 
     def init_tray_icon(self):
         self._widget = QtGui.QWidget()
-        self._icon = systray.SystemTrayIcon(QtGui.QIcon("ui/playing.svg"), self._widget)
+        self._icon = systray.SystemTrayIcon(self._widget)
 
     def run(self, uri):
         if self.show_tray_icon:

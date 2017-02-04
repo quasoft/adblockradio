@@ -9,7 +9,7 @@ import dispatchers
 import utils
 import ui
 
-ICON_PATH = "ui/"
+ICON_PATH = "ui/svg/"
 ICON_BLOCKED = ICON_PATH + "blocked.svg"
 ICON_PLAYING = ICON_PATH + "playing.svg"
 ICON_PAUSED = ICON_PATH + "paused.svg"
@@ -17,11 +17,11 @@ ICON_PLAYING_AND_RECORDING = ICON_PATH + "playing_recording.svg"
 
 
 class SystemTrayIcon(QtGui.QSystemTrayIcon):
-    def __init__(self, icon, parent=None):
+    def __init__(self, parent=None):
         self._is_playing = False
         self._is_recording = False
 
-        QtGui.QSystemTrayIcon.__init__(self, icon, parent)
+        QtGui.QSystemTrayIcon.__init__(self, QtGui.QIcon(ICON_PLAYING), parent)
 
         self._icon_blocked = QtGui.QIcon(ICON_BLOCKED)
         self._icon_playing = QtGui.QIcon(ICON_PLAYING)
