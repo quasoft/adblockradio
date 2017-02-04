@@ -1,8 +1,8 @@
 import dispatchers
-from storage import Storage
+from .base import BaseStorage
 
 
-class StateStorage(Storage):
+class StateStorage(BaseStorage):
     filename = "last_station.txt"
 
     @classmethod

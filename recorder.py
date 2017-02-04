@@ -8,7 +8,7 @@ from gi.repository import GObject, Gst
 
 import config
 import dispatchers
-import userdata
+from storage import userdata
 import utils
 
 

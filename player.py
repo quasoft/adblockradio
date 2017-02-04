@@ -11,7 +11,7 @@ from gi.repository import GObject, Gst
 import config
 import dispatchers
 import utils
-from blacklist import BlacklistStorage
+from storage.blacklist import BlacklistStorage
 from metareader.icecast import IcecastReader
 from player_tee import PlayerTee
 

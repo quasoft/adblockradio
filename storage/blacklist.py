@@ -4,11 +4,11 @@ from PyQt4 import QtGui
 
 import dispatchers
 import utils
-from storage import Storage
+from .base import BaseStorage
 from ui.dlg_blacklist_editor import DlgBlacklistEditor
 
 
-class BlacklistStorage(Storage):
+class BlacklistStorage(BaseStorage):
     """Manages patterns for blacklisting song titles.
     The storage is a simple text file with separate patterns (regular expressions)
     written on each line.

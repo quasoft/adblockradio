@@ -1,9 +1,9 @@
 import os
 
-from .storage import userdata
+from . import userdata
 
 
-class Storage:
+class BaseStorage:
     filename = ""
 
     @classmethod

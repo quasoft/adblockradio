@@ -15,9 +15,9 @@ import config
 import dispatchers
 import utils
 import systray
-from state import StateStorage
-import favourites   # We need to import favourites to register its events
-import blacklist    # We need to import blacklist to register its events
+from storage.state import StateStorage
+from storage.blacklist import BlacklistStorage
+from storage.favourites import FavouritesStorage
 from player import Player
 
 

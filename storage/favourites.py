@@ -1,12 +1,11 @@
 from PyQt4 import QtGui
 
 import dispatchers
-import utils
-from storage import Storage
+from .base import BaseStorage
 from ui.dlg_favourites_editor import DlgFavouritesEditor
 
 
-class FavouritesStorage(Storage):
+class FavouritesStorage(BaseStorage):
     filename = "favourite_songs.txt"
 
     @classmethod
