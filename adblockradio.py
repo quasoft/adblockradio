@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import sys
-import signal
-import time
-import lockfile
 import threading
+import time
+
 import gi
+
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
 gi.require_version('Gtk', '3.0')
