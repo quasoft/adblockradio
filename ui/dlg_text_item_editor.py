@@ -5,7 +5,7 @@ from PyQt4.QtGui import QStandardItemModel
 from event import Event
 
 from .ui_text_item_editor import Ui_TextItemEditor
-import utils
+from ui import utils
 
 
 class DlgTextItemEditor(QDialog, Ui_TextItemEditor):

@@ -7,6 +7,7 @@ from PyQt4 import QtGui
 import config
 import dispatchers
 import utils
+import ui
 
 ICON_PATH = "ui/"
 ICON_BLOCKED = ICON_PATH + "blocked.svg"
@@ -102,7 +103,7 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
     def on_search_for_lyrics_click(self):
         print("Search for lyrics clicked:", self._last_song_title)
         if self._last_song_title:
-            utils.open_in_azlyrics(self._last_song_title)
+            ui.utils.open_in_azlyrics(self._last_song_title)
 
     def on_blacklist_click(self):
         print("Blacklist clicked:", self._last_song_title)

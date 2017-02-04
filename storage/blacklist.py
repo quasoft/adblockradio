@@ -3,9 +3,9 @@ import re
 from PyQt4 import QtGui
 
 import dispatchers
-import utils
 from .base import BaseStorage
 from ui.dlg_blacklist_editor import DlgBlacklistEditor
+import ui
 
 
 class BlacklistStorage(BaseStorage):
@@ -44,6 +44,23 @@ class BlacklistStorage(BaseStorage):
         return True
 
     @classmethod
+    def is_valid_blacklist_pattern(cls, pattern):
+        """
+        If value contains at least five characters (not spaces), consider this a valid pattern
+        :param pattern: The regex pattern to check
+        :return: True if pattern is valid
+        """
+        matches = re.findall('[\S]+', pattern, re.LOCALE)
+
+        if len(matches) < 5:
+            return False
+
+        if any(re.search(pattern, t, re.LOCALE) for t in ['', ' ', 'JUST SOME TEST', "\n"]):
+            return False
+
+        return True
+
+    @classmethod
     def is_blacklisted(cls, value):
         return any(re.search(p, value, re.LOCALE) for p in cls.read_items() if p.strip())
 
@@ -59,19 +76,19 @@ class BlacklistStorage(BaseStorage):
     def add_song_title(cls, title):
         value = title.strip()
         # If value contains at least five characters (not spaces), consider this a valid pattern
-        if not utils.is_valid_blacklist_pattern(value):
+        if not cls.is_valid_blacklist_pattern(value):
             return
 
         # Construct regex pattern from value: '.*value.*'
         pattern = '.*' + value + '.*'
 
         # Ask user to modify pattern, if wanted
-        pattern, ok = utils.input_query(None, "Mark as advertisement - blacklist meta title", "Regex pattern:", pattern)
+        pattern, ok = ui.utils.input_query(None, "Mark as advertisement - blacklist meta title", "Regex pattern:", pattern)
         if not ok:
             return
 
         # Make sure the user entered a pattern that would not match spaces or an otherwise valid title
-        if not utils.is_valid_blacklist_pattern(pattern):
+        if not cls.is_valid_blacklist_pattern(pattern):
             QtGui.QMessageBox.question(
                 None,
                 'Warning',

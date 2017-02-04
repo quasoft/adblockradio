@@ -3,8 +3,6 @@ import random
 import re
 import requests
 import unicodedata
-from PyQt4 import QtGui
-import webbrowser
 
 import config
 
@@ -59,57 +57,10 @@ def get_stream_from_playlist(url):
     return next(lines)
 
 
-def is_valid_blacklist_pattern(pattern):
-    """
-    If value contains at least five characters (not spaces), consider this a valid pattern
-    :param pattern: The regex pattern to check
-    :return: True if pattern is valid
-    """
-    matches = re.findall('[\S]+', pattern, re.LOCALE)
-
-    if len(matches) < 5:
-        return False
-
-    if any(re.search(pattern, t, re.LOCALE) for t in ['', ' ', 'JUST SOME TEST', "\n"]):
-        return False
-
-    return True
-
-
-def input_query(parent, title, prompt, default_value="", width=500, height=100):
-    """
-    Opens an dialog box for entering a single text value
-    :param parent: Parent widget
-    :param title: Dialog title
-    :param prompt: Label text before input box
-    :param default_value: Default value
-    :param width: Dialog width
-    :param height: Dialog height
-    :return: tuple (value, ok) - (text value entered by user, was OK button clicked)
-    """
-    dlg = QtGui.QInputDialog(parent)
-    dlg.setInputMode(QtGui.QInputDialog.TextInput)
-    dlg.setWindowTitle(title)
-    dlg.setLabelText(prompt)
-    dlg.setTextValue(default_value)
-    dlg.resize(width, height)
-    ok = dlg.exec_()
-    value = dlg.textValue()
-    dlg.close()
-    return value, ok
-
-
 def sanitize_filename(filename):
     value = unicodedata.normalize('NFKC', filename)
     value = re.sub(r'[^\w\s-]', '', value).strip().lower()
     return re.sub(r'[-\s]+', '-', value)
-
-
-def open_in_azlyrics(title):
-    params = {'q': title}
-    base = 'http://search.azlyrics.com/search.php'
-    url = requests.Request('GET', base, params=params).prepare().url
-    webbrowser.open(url)
 
 
 def truncate_song_title(title):
