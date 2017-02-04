@@ -10,6 +10,7 @@ Detects advertisements by inspecting song titles inside stream metadata and swit
 * PyQt4
 * python appdirs package
 * python plac package
+* python requests package
 
 ## How to install:
 
@@ -26,7 +27,7 @@ Tested to work under Ubuntu 16.04 only. Might work on debian based distros too:
 3. Install python dependencies:
 
         sudo apt-get install python3-pip
-        /usr/bin/python3 -m pip install appdirs plac requests urllib3
+        /usr/bin/python3 -m pip install appdirs plac requests
 
 4. Download project:
 

@@ -1,6 +1,6 @@
 ## Must have
 * [ ] Move storage classes in a subfolder
-* [ ] Make QT4 dependency optional, as player should run without GUI, if started with `--daemon` option
+* [ ] Make QT4 dependency optional, as player should run without GUI, if started with `--console` option
 * [ ] Create tests
 * [ ] Create Ubuntu install package (`.deb`)
 
