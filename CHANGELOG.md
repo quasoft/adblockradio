@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
 ### Changed
+- Fix: Do not add an empty item in blacklist and favourites files, if last line already ends with a newline 
 
 
 ## [Release 0.2] - 2017-01-24
