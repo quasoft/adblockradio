@@ -119,8 +119,6 @@ def truncate_song_title(title):
     if len(value) > MAX_SONG_TITLE_LENGTH - 3:
         parts = re.split(':|;|-', value)
         value = '...' + parts[-1] if len(parts) > 1 else value
-        print(value)
-        print(parts)
 
     # If the title is still too long, remove text in brackets
     if len(value) > MAX_SONG_TITLE_LENGTH - 3:
