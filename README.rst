@@ -14,11 +14,6 @@ Requirements:
 -  PyQt4
 -  Python packages: appdirs, plac, requests
 
-How it works
-------------
-
-Coming soon...
-
 Download:
 ---------
 
@@ -26,7 +21,7 @@ Binary packages for the following OSes are provided:
 
 -  Ubuntu 16.04
 
-   Coming soon....
+   `Package for Ubuntu 16.04 64-bit`_
 
 -  Windows 10 64 bit
 
@@ -39,10 +34,12 @@ it manually - see below.
 How to customize:
 -----------------
 
+After you install the player you need to add your your radio stations and setup blacklist patterns.
+
 #. Edit list of radio stations in ``config.py``
 
-#. Add blacklist patterns for advertisements in
-   ``~/.local/share/adblockradio/blacklist.txt``
+#. Add blacklist regex patterns for advertisements from the context menu of the notification icon.
+   Blacklist patterns are saved in file ``~/.local/share/adblockradio/blacklist.txt``, which can also be edited manually.
 
 #. Start player with GUI in system tray:
 
@@ -57,13 +54,11 @@ How to customize:
        python3 adblockradio/adblockradio.py --station URL_TO_RADIO_STREAM
 
 
-How to contribute:
-------------------
+How to install manually:
+------------------------
 
 Ubuntu 16.04:
 ~~~~~~~~~~~~~
-
-Development has been done under Ubuntu 16.04 64 bit:
 
 #. Download project:
 
@@ -78,6 +73,7 @@ Development has been done under Ubuntu 16.04 64 bit:
    ::
 
        make develop
+       make install
 
 #. Start player with GUI in system tray:
 
@@ -107,7 +103,7 @@ For Ubuntu/Debian:
 
     make init
     make deb
-    sudo gdebi deb_dist/python3-adblockradio_0.3-1_all.deb
+    sudo gdebi deb_dist/python3-adblockradio_0.3.1-1_all.deb
 
 For Windows 10 64 bit:
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -120,3 +116,6 @@ Credits
 -------
 
 -  System tray icons by https://www.iconfinder.com/ChihabJr
+
+
+.. _`Package for Ubuntu 16.04 64-bit`: https://github.com/quasoft/adblockradio/releases/download/0.3.0/python3-adblockradio_0.3.0-1_all.deb

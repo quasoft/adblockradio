@@ -5,10 +5,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Release 0.3.1] - 2017-02-05
+### Changed
+- Fix: Added missing development dependencies in Makefile
+- Updated README
+
 ## [Release 0.3.0] - 2017-02-05
 ### Added
 - Released package for Ubuntu 16.04 64-bit
-- Introduced Makefile for developers
+- Introduced Makefile for developers and setup.py
 
 ### Changed
 - Changed project structure to make release of OS packages easier
