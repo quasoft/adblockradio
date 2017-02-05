@@ -56,13 +56,13 @@ distros too:
 
        /usr/bin/python3 adblockradio.py
 
-or, to start with a specific radio station:
+   or, to start with a specific radio station:
 
    ::
 
         /usr/bin/python3 adblockradio.py --station URL_TO_RADIO_STREAM
 
-*You can add more radio stations to config.py file*
+   *You can add more radio stations to config.py file*
 
 #. Start player as console application:
 
@@ -76,7 +76,7 @@ or, to start with a specific radio station:
 
        ./adblockradio.sh start &
 
-To stop daemon:
+   To stop daemon:
 
    ::
 
@@ -93,7 +93,7 @@ How to build installer/OS package:
 For Ubuntu/Debian:
 ~~~~~~~~~~~~~~~~~~
 
-   ::
+::
 
     apt-get install python3-stdeb fakeroot python3-all
     /usr/bin/python3 setup.py --command-packages=stdeb.command bdist_deb --with-python3
