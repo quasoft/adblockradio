@@ -3,11 +3,13 @@ import re
 import sys
 import functools
 from PyQt4 import QtGui
+import pkg_resources
 
 import config
 import dispatchers
 import utils
 import ui
+
 
 ICON_PATH = "ui/svg/"
 ICON_BLOCKED = ICON_PATH + "blocked.svg"
@@ -21,13 +23,13 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self._is_playing = False
         self._is_recording = False
 
-        QtGui.QSystemTrayIcon.__init__(self, QtGui.QIcon(ICON_PLAYING), parent)
-
-        self._icon_blocked = QtGui.QIcon(ICON_BLOCKED)
-        self._icon_playing = QtGui.QIcon(ICON_PLAYING)
-        self._icon_paused = QtGui.QIcon(ICON_PAUSED)
-        self._icon_playing_and_recording = QtGui.QIcon(ICON_PLAYING_AND_RECORDING)
+        self._icon_blocked = QtGui.QIcon(pkg_resources.resource_filename("adblockradio", ICON_BLOCKED))
+        self._icon_playing = QtGui.QIcon(pkg_resources.resource_filename("adblockradio", ICON_PLAYING))
+        self._icon_paused = QtGui.QIcon(pkg_resources.resource_filename("adblockradio", ICON_PAUSED))
+        self._icon_playing_and_recording = QtGui.QIcon(pkg_resources.resource_filename("adblockradio", ICON_PLAYING_AND_RECORDING))
         self._last_icon = None
+
+        QtGui.QSystemTrayIcon.__init__(self, self._icon_playing, parent)
 
         self._last_tooltip = ""
         self._last_song_title = ""
