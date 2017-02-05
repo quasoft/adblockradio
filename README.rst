@@ -21,7 +21,7 @@ Binary packages for the following OSes are provided:
 
 -  Ubuntu 16.04 64-bit:
 
-   `python3-adblockradio_0.3.1-1_all.deb`_  (package for Ubuntu 16.04 64-bit)
+   `python3-adblockradio_0.3.1-1_all.deb`_
 
 -  Windows 10 64-bit:
 
