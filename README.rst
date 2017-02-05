@@ -17,7 +17,16 @@ Requirements:
 Download:
 ---------
 
-Installer for the following OSes is provided:
+Binary packages for the following OSes are provided:
+
+-  Ubuntu 16.04
+
+   Coming soon....
+
+-  Windows 10 64 bit
+
+   Coming soon....
+
 
 If you want to run the player on another OS, you might need to install
 it manually - see below.
@@ -43,24 +52,24 @@ distros too:
 
    ::
 
-       make install
+       make manual_install
 
 #. Edit list of radio stations in config.py
 
 #. Add blacklist patterns for advertisements in
    ``~/.local/share/adblockradio/blacklist.txt``
 
-#. Start player in system tray:
+#. Start player with GUI in system tray:
 
    ::
 
-       /usr/bin/python3 adblockradio.py
+       /usr/bin/python3 adblockradio/adblockradio.py
 
    or, to start with a specific radio station:
 
    ::
 
-        /usr/bin/python3 adblockradio.py --station URL_TO_RADIO_STREAM
+       /usr/bin/python3 adblockradio/adblockradio.py --station URL_TO_RADIO_STREAM
 
    *You can add more radio stations to config.py file*
 
@@ -68,24 +77,24 @@ distros too:
 
    ::
 
-       ./adblockradio.sh start
+       bin/adblockradio.sh start
 
 #. Start player as daemon:
 
    ::
 
-       ./adblockradio.sh start &
+       bin/adblockradio.sh start &
 
    To stop daemon:
 
    ::
 
-        ./adblockradio.sh stop
+       bin/adblockradio.sh stop
 
 Windows 10 64 bit:
 ~~~~~~~~~~~~~~~~~~
 
-…
+- Coming soon....
 
 How to build installer/OS package:
 ----------------------------------
@@ -96,7 +105,7 @@ For Ubuntu/Debian:
 ::
 
     apt-get install python3-stdeb fakeroot python3-all
-    /usr/bin/python3 setup.py --command-packages=stdeb.command bdist_deb --with-python3
+    make deb
 
 Credits
 -------
