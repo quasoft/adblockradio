@@ -21,7 +21,7 @@ Binary packages for the following OSes are provided:
 
 -  Ubuntu 16.04 64-bit:
 
-   **`python3-adblockradio_0.3.1-1_all.deb (package for Ubuntu 16.04 64-bit)`**
+   **`python3-adblockradio_0.3.1-1_all.deb`_  (package for Ubuntu 16.04 64-bit)**
 
 -  Windows 10 64-bit:
 
@@ -118,4 +118,4 @@ Credits
 -  System tray icons by https://www.iconfinder.com/ChihabJr
 
 
-.. _`Package for Ubuntu 16.04 64-bit`: https://github.com/quasoft/adblockradio/releases/download/0.3.1/python3-adblockradio_0.3.1-1_all.deb
+.. _`python3-adblockradio_0.3.1-1_all.deb`: https://github.com/quasoft/adblockradio/releases/download/0.3.1/python3-adblockradio_0.3.1-1_all.deb
