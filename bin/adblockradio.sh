@@ -1,6 +1,6 @@
 #!/bin/bash
-
-DAEMON=adblockradio.py
+DIR=`dirname "$(readlink -f "$0")"`
+DAEMON=$DIR/../adblockradio/adblockradio.py
 PIDFILE=/tmp/adblockradio.lock
 
 . /lib/lsb/init-functions
