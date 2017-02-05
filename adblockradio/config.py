@@ -33,11 +33,18 @@ Only used if block_mode is set to BlockMode.REDUCE_AND_SWITCH.
 max_volume = 1.0
 """Maximum volume - volume during songs"""
 
-ad_block_volume = 0.1
+ad_block_volume = 0.02
 """Volume level during advertisement blocks"""
 
 stations = [
-    {'name': 'MyRadio123', 'uri': 'http://exampleofurltostream.local/stream.m3u'},
+    {'name': 'Energy', 'uri': 'http://stream.radioreklama.bg:80/nrj128'},   # Ice metadata tags
+    {'name': 'NJoy', 'uri': 'http://46.10.150.123:80/njoy.mp3'},            # Empty tags during advertisement blocks.
+    #{'name': 'Star FM', 'uri': 'http://pulsar.atlantis.bg:8000/starfm'},    # No stream tags!
+    #{'name': 'Z-Rock', 'uri': 'http://46.10.150.123:80/z-rock.mp3'},        # No stream tags!
+    {'name': 'Radio 1', 'uri': 'http://stream.radioreklama.bg:80/radio1128'},  # Ice metadata tags
+    {'name': 'Radio 1 Rock', 'uri': 'http://stream.radioreklama.bg:80/radio1rock.ogg'},  # Tags only in ogg audio data.
+    {'name': 'City', 'uri': 'http://stream.radioreklama.bg:80/city64'},     # Ice metadata tags
+    #{'name': 'Energy-90s', 'uri': 'http://stream.radioreklama.bg:80/energy-90s'},  # No stream tags!
 ]
 """Replace these with URLs to streams of your favourite radio stations.
 Currently playlists like m3u are not supported, and you need to
