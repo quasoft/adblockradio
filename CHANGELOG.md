@@ -5,13 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased] 
+## [Release 0.3.0] - 2017-02-05
 ### Added
-
+- Released package for Ubuntu 16.04 64-bit
+- Introduced Makefile for developers
 
 ### Changed
+- Changed project structure to make release of OS packages easier
 - Fix: Do not add an empty item in blacklist and favourites files, if last line already ends with a newline 
-
 
 ## [Release 0.2] - 2017-01-24
 ### Added

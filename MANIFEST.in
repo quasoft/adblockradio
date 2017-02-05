@@ -1,0 +1,6 @@
+include CHANGELOG.md
+include LICENSE
+include Makefile
+include README.txt
+include requirements.txt
+recursive-include adblockradio/ui/svg *.svg

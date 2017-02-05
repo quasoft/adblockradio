@@ -1,10 +1,9 @@
 [Desktop Entry]
-Version=1.0
+Version=0.3
 Name=Ad Block Radio
 Comment=Internet radio player that blocks advertisements.
-Exec=/usr/bin/python3 adblockradio.py
-Path=/home/user/adblockradio/
-Icon=/home/user/adblockradio/ui/svg/icon.svg
+Exec=adblockradio
+Icon=/usr/share/adblockradio/icon.svg
 Terminal=false
 Type=Application
-Categories=Application;
+Categories=Application;AudioVideo;Audio;Music;

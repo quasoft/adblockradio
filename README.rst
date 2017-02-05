@@ -14,6 +14,11 @@ Requirements:
 -  PyQt4
 -  Python packages: appdirs, plac, requests
 
+How it works
+------------
+
+Coming soon...
+
 Download:
 ---------
 
@@ -31,14 +36,34 @@ Binary packages for the following OSes are provided:
 If you want to run the player on another OS, you might need to install
 it manually - see below.
 
-How to install manually:
-------------------------
+How to customize:
+-----------------
+
+#. Edit list of radio stations in ``config.py``
+
+#. Add blacklist patterns for advertisements in
+   ``~/.local/share/adblockradio/blacklist.txt``
+
+#. Start player with GUI in system tray:
+
+   ::
+
+       python3 adblockradio/adblockradio.py
+
+   or, to start with a specific radio station:
+
+   ::
+
+       python3 adblockradio/adblockradio.py --station URL_TO_RADIO_STREAM
+
+
+How to contribute:
+------------------
 
 Ubuntu 16.04:
 ~~~~~~~~~~~~~
 
-Tested to work under Ubuntu 16.04. Might work on other debian based
-distros too:
+Development has been done under Ubuntu 16.04 64 bit:
 
 #. Download project:
 
@@ -52,49 +77,25 @@ distros too:
 
    ::
 
-       make manual_install
-
-#. Edit list of radio stations in config.py
-
-#. Add blacklist patterns for advertisements in
-   ``~/.local/share/adblockradio/blacklist.txt``
+       make develop
 
 #. Start player with GUI in system tray:
 
    ::
 
-       /usr/bin/python3 adblockradio/adblockradio.py
+       python3 adblockradio/adblockradio.py
 
-   or, to start with a specific radio station:
+
+   or in console mode (eg. for debugging purposes):
 
    ::
 
-       /usr/bin/python3 adblockradio/adblockradio.py --station URL_TO_RADIO_STREAM
+       python3 adblockradio/adblockradio.py --console
+
+    If you have Anaconda Python installed, use full path to Python binary (replace ``python3`` with ``/usr/bin/python3``)
 
    *You can add more radio stations to config.py file*
 
-#. Start player as console application:
-
-   ::
-
-       bin/adblockradio.sh start
-
-#. Start player as daemon:
-
-   ::
-
-       bin/adblockradio.sh start &
-
-   To stop daemon:
-
-   ::
-
-       bin/adblockradio.sh stop
-
-Windows 10 64 bit:
-~~~~~~~~~~~~~~~~~~
-
-- Coming soon....
 
 How to build installer/OS package:
 ----------------------------------
@@ -104,8 +105,16 @@ For Ubuntu/Debian:
 
 ::
 
-    apt-get install python3-stdeb fakeroot python3-all
+    make init
     make deb
+    sudo gdebi deb_dist/python3-adblockradio_0.3-1_all.deb
+
+For Windows 10 64 bit:
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+Coming soon...
 
 Credits
 -------

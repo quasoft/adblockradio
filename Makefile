@@ -1,3 +1,47 @@
+PYTHON = /usr/bin/python3
+NAME = `/usr/bin/python3 setup.py --name`
+USERNAME := $(shell whoami)
+
+init:
+	$(PYTHON) -m pip install -r requirements.txt
+	sudo apt-get install pyqt4-dev-tools qt4-designer
+	sudo apt-get install python3-stdeb fakeroot python3-all
+
+dist: source deb
+
+source:
+	$(PYTHON) setup.py sdist
+
+deb:
+	$(PYTHON) setup.py --command-packages=stdeb.command bdist_deb
+
+debsrc:
+	$(PYTHON) setup.py --command-packages=stdeb.command sdist_dsc
+
+rpm:
+	$(PYTHON) setup.py bdist_rpm --post-install=rpm/postinstall --pre-uninstall=rpm/preuninstall
+
+check:
+	# pyflakes adblockradio/*.py
+	# find adblockradio/ -name \*.py | grep -v "^test_" | xargs pylint --errors-only --reports=n | grep -v "PyQt4"
+	# pep8
+	# pyntch
+	# pychecker
+	# pymetrics
+
+clean:
+	$(PYTHON) setup.py clean
+	rm -rf build/ MANIFEST dist build adblockradio.egg-info deb_dist
+	find . -name '*.pyc' -delete
+
+develop : adblockradio.py
+	sudo apt-get install python3-pip python3-pyqt4 gstreamer1.0-plugins-base gstreamer1.0-plugins-good python3-gst-1.0
+	$(PYTHON) -m pip install appdirs plac requests
+	sed -i -e "s|/home/user/|/home/$(USERNAME)/|g" share/adblockradio.desktop
+	sudo cp share/adblockradio.desktop /usr/share/applications
+
 # Compile Qt designs to python classes
 ui/ui_text_item_editor.py : ui/ui_text_item_editor.ui
 	pyuic4 ui/ui_text_item_editor.ui -o ui/ui_text_item_editor.py
+
+.PHONY: init dist source deb rpm check clean develop

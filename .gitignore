@@ -92,3 +92,7 @@ ENV/
 
 # Folder with experimental tests
 exp/*
+
+deb_dist/
+
+adblockradio*.tar.gz
