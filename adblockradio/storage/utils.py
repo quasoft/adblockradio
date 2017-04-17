@@ -8,7 +8,7 @@ def get_last_utf8_char(filename, ignore_newlines=True):
     :param ignore_newlines: Set to true, if the newline character at the end of the file should be ignored
     :return: Returns the last UTF-8 character in the file or None, if the file is empty
     """
-    with open(filename, 'rb') as f:
+    with open(filename, 'rb', encoding=config.default_encoding) as f:
         last_char = None
 
         # Reads last 4 bytes, as the maximum size of an UTF-8 character is 4 bytes

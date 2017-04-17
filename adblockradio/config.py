@@ -74,3 +74,5 @@ recording = {
     file_ext (str): File extension for recorded files (should be related to muxer)
     create_segments (bool): Specifies if a new segment should be created when creating a new file.
 """
+
+default_encoding = "UTF-8"

@@ -1,5 +1,6 @@
 import os
 
+import config
 from . import userdata
 from . import utils
 
@@ -23,7 +24,7 @@ class BaseStorage:
     def open(cls, mode):
         if any(c in mode for c in 'aw+'):
             cls.makedirs()
-        return open(cls.get_filepath(), mode)
+        return open(cls.get_filepath(), mode, encoding=config.default_encoding)
 
     @classmethod
     def read(cls):
