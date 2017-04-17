@@ -7,7 +7,7 @@ import gi
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject, Gst
+from gi.repository import GObject, Gst, GLib
 
 import config
 import dispatchers
@@ -15,6 +15,8 @@ import utils
 from storage.blacklist import BlacklistStorage
 from metareader.icecast import IcecastReader
 from player_tee import PlayerTee
+
+from PyQt4.QtCore import QTimer
 
 
 class Player:
@@ -24,7 +26,11 @@ class Player:
         self._last_uri = ""
         self._last_title = ""
         self._just_switched = True
-        GObject.timeout_add(1000, self.on_timer_check_ad_duration)
+
+        # Init timer
+        self._timer = QTimer()
+        self._timer.timeout.connect(self.on_timer_check_ad_duration)
+        self._timer.start(1000)
 
         # Initialize GStreamer
         Gst.init(None)
