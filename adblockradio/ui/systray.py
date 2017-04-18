@@ -23,10 +23,10 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self._is_playing = False
         self._is_recording = False
 
-        self._icon_blocked = QtGui.QIcon(pkg_resources.resource_filename("adblockradio", ICON_BLOCKED))
-        self._icon_playing = QtGui.QIcon(pkg_resources.resource_filename("adblockradio", ICON_PLAYING))
-        self._icon_paused = QtGui.QIcon(pkg_resources.resource_filename("adblockradio", ICON_PAUSED))
-        self._icon_playing_and_recording = QtGui.QIcon(pkg_resources.resource_filename("adblockradio", ICON_PLAYING_AND_RECORDING))
+        self._icon_blocked = QtGui.QIcon(utils.resource_filename(ICON_BLOCKED))
+        self._icon_playing = QtGui.QIcon(utils.resource_filename(ICON_PLAYING))
+        self._icon_paused = QtGui.QIcon(utils.resource_filename(ICON_PAUSED))
+        self._icon_playing_and_recording = QtGui.QIcon(utils.resource_filename(ICON_PLAYING_AND_RECORDING))
         self._last_icon = None
 
         QtGui.QSystemTrayIcon.__init__(self, self._icon_playing, parent)

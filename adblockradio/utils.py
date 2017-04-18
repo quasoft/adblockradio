@@ -3,6 +3,9 @@ import random
 import re
 import requests
 import unicodedata
+import sys
+import os
+import pkg_resources
 
 import config
 
@@ -80,3 +83,23 @@ def truncate_song_title(title):
         value = value[:MAX_SONG_TITLE_LENGTH] + '...'
 
     return value
+
+
+def is_frozen():
+    return getattr(sys, 'frozen', False)
+
+
+def resource_filename(filename):
+    if is_frozen():
+        path = os.path.join(sys._MEIPASS, filename)
+    else:
+        path = pkg_resources.resource_filename("adblockradio", filename)
+
+    return path
+
+
+def set_gst_plugin_path():
+    path = sys._MEIPASS + ";" + os.path.join(sys._MEIPASS, 'gst_plugins')
+    os.environ["GST_PLUGIN_PATH"] = path
+    os.environ["GST_PLUGIN_PATH_1_0"] = path
+

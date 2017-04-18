@@ -27,6 +27,10 @@ class Player:
         self._last_title = ""
         self._just_switched = True
 
+        # If running inside PyInstaller, set GST_PLUGIN_PATH
+        if utils.is_frozen():
+            utils.set_gst_plugin_path()
+
         # Init timer
         self._timer = QTimer()
         self._timer.timeout.connect(self.on_timer_check_ad_duration)
