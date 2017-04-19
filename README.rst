@@ -112,8 +112,6 @@ For Windows 10 64 bit:
 
 To build the binary package for Window yourself, follow these steps:
 
-::
-
 #. Install Python 3.4, 32-bit version. This is important as PyGi currently does not support Python versions newer than 3.4.
 
 #. Install All-In-One PyGI/PyGObject for Windows (tested with pygi-aio-3.18.2_rev12-setup). During setup you have to select the following libraries:
