@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Release 0.3.2] - 2017-04-19
+### Changed
+- Released Win32 binary package (tested with Windows 10 64-bit)
+- Update: Small changes to support freezing with PyInstaller
+
 ## [Release 0.3.1] - 2017-02-05
 ### Changed
 - Fix: Added missing development dependencies in Makefile
