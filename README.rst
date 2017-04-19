@@ -25,7 +25,7 @@ Binary packages for the following OSes are provided:
 
 -  Windows 10 64-bit:
 
-   Comming soon...
+   `adblockradio_0.3.2.zip`_
 
 
 If you want to run the player on another OS, you might need to install
