@@ -20,7 +20,7 @@ else:
 
 setup(
     name='adblockradio',
-    version='0.3.1',
+    version='0.3.2',
     author='QuaSoft',
     author_email='info@quasoft.net',
     description='Internet radio player for Ubuntu that blocks advertisements',
@@ -41,7 +41,7 @@ setup(
             'adblockradio=adblockradio.adblockradio:main'
         ]
     },
-    download_url='https://github.com/quasoft/adblockradio/archive/0.3.1.tar.gz',
+    download_url='https://github.com/quasoft/adblockradio/archive/0.3.2.tar.gz',
     install_requires=['appdirs', 'requests'],
     extras_require={
         'console':  ['plac']
