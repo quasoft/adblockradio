@@ -35,19 +35,19 @@ clean:
 	rm -rf build/ MANIFEST dist build adblockradio.egg-info deb_dist
 	find . -name '*.pyc' -delete
 
-develop : adblockradio.py
+develop : adblockradio/adblockradio.py
 	sudo apt-get install python3-pip python3-pyqt4 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly python3-gst-1.0 pyqt4-dev-tools qt4-designer python3-stdeb fakeroot python3-all
 	$(PYTHON) -m pip install -r requirements.txt
 
 test:
 	nosetests --with-coverage --cover-erase --cover-html --cover-package=adblockradio --all-modules --cover-branches
 
-install : adblockradio.py
+install : adblockradio/adblockradio.py
 	sed -i -e "s|/home/user/|/home/$(USERNAME)/|g" share/adblockradio.desktop
 	sudo cp share/adblockradio.desktop /usr/share/applications
 
 # Compile Qt designs to python classes
-ui/ui_text_item_editor.py : ui/ui_text_item_editor.ui
-	pyuic4 ui/ui_text_item_editor.ui -o ui/ui_text_item_editor.py
+adblockradio/ui/ui_text_item_editor.py : adblockradio/ui/ui_text_item_editor.ui
+	pyuic4 adblockradio/ui/ui_text_item_editor.ui -o adblockradio/ui/ui_text_item_editor.py
 
 .PHONY: init dist source deb rpm check clean develop install
