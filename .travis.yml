@@ -17,6 +17,8 @@ install:
   - sudo easy_install -U setuptools
   - sudo pip install
   - make init
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
 script:
   - nosetests --with-coverage --cover-erase --cover-html --cover-package=adblockradio --all-modules --cover-branches
   
