@@ -69,7 +69,7 @@ def read_uri_from_m3u_string(s):
 
     if not lines:
         return None
-    return next(lines, None)
+    return next(lines, '')
 
 
 def read_uri_from_pls_url(url):
@@ -96,7 +96,7 @@ def read_uri_from_pls_string(s):
     if not lines:
         return None
 
-    return next(lines).split('=', 1)[1].strip()
+    return next(lines, '').split('=', 1)[1].strip()
 
 
 def sanitize_filename(filename):

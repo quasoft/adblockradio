@@ -53,6 +53,10 @@ class TestModule(unittest.TestCase):
             uri = utils.read_uri_from_pls_string(f.read())
         self.assertEqual('http://somenonexistentradiostation3.local:8008/stream.mp3', uri)
 
+    def test_read_uri_from_pls_with_empty_string(self):
+        uri = utils.read_uri_from_pls_string('')
+        self.assertIsNone(uri)
+
 
 if __name__ == '__main__':
     logging.basicConfig(stream=sys.stderr)
