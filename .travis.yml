@@ -1,0 +1,9 @@
+language: python
+python:
+  - 3.4
+install:
+  - python -m easy_install -U setuptools
+  - make develop
+script:
+  - nosetests --with-coverage --cover-erase --cover-html --cover-package=adblockradio --all-modules --cover-branches
+  

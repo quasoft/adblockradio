@@ -39,6 +39,9 @@ develop : adblockradio.py
 	sudo apt-get install python3-pip python3-pyqt4 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly python3-gst-1.0 pyqt4-dev-tools qt4-designer python3-stdeb fakeroot python3-all
 	$(PYTHON) -m pip install -r requirements.txt
 
+test:
+	nosetests --with-coverage --cover-erase --cover-html --cover-package=adblockradio --all-modules --cover-branches
+
 install : adblockradio.py
 	sed -i -e "s|/home/user/|/home/$(USERNAME)/|g" share/adblockradio.desktop
 	sudo cp share/adblockradio.desktop /usr/share/applications

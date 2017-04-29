@@ -1,0 +1,5 @@
+#
+#EXTM3U
+#EXTINF:191,Artist Name - Track Title
+C:\Documents and Settings\someuser\My Music\Sample.mp3
+http://somenonexistentradiostation3.local:8008/stream.mp3
