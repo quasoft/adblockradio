@@ -12,9 +12,9 @@ virtualenv:
 install:
   - sudo apt-get update
   - sudo apt-get install python3-coverage
-  - sudo python -m pip install six packaging appdirs
-  - sudo python -m easy_install -U setuptools
-  - sudo python -m pip install
+  - sudo python3 -m pip install six packaging appdirs
+  - sudo python3 -m easy_install -U setuptools
+  - sudo python3 -m pip install
   - make init
 script:
   - nosetests --with-coverage --cover-erase --cover-html --cover-package=adblockradio --all-modules --cover-branches
