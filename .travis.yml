@@ -7,7 +7,7 @@ python:
 install:
   - python -m pip install six packaging appdirs
   - python -m easy_install -U setuptools
-  - make develop
+  - make init
 script:
   - nosetests --with-coverage --cover-erase --cover-html --cover-package=adblockradio --all-modules --cover-branches
   

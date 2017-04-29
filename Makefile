@@ -4,8 +4,9 @@ USERNAME := $(shell whoami)
 
 init:
 	sudo apt-get install python3-pip gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly python3-gst-1.0
-	sudo apt-get install python3-pyqt4 pyqt4-dev-tools qt4-designer
-	sudo apt-get install python3-stdeb fakeroot python3-all
+	sudo apt-get install python3-pyqt4 pyqt4-dev-tools
+	sudo apt-get install fakeroot python3-all
+	# sudo apt-get install python3-stdeb qt4-designer
 	$(PYTHON) -m pip install appdirs plac requests
 
 dist: source deb
@@ -50,4 +51,4 @@ install : adblockradio/adblockradio.py
 adblockradio/ui/ui_text_item_editor.py : adblockradio/ui/ui_text_item_editor.ui
 	pyuic4 adblockradio/ui/ui_text_item_editor.ui -o adblockradio/ui/ui_text_item_editor.py
 
-.PHONY: init dist source deb rpm check clean develop install
+.PHONY: init dist source deb rpm check clean develop install test
