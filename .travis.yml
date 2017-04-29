@@ -12,7 +12,7 @@ virtualenv:
 install:
   - sudo apt-get update
   - sudo apt-get install python3-coverage
-  - sudo apt-get install gir1.2-gstreamer-1.0 gir1.2-gst-plugins-base-1.0 gir1.2-gtk-3.0
+  - sudo apt-get install gir1.2-gstreamer-1.0 gir1.2-gst-plugins-base-1.0
   - sudo pip install six packaging appdirs
   - sudo easy_install -U setuptools
   - sudo pip install

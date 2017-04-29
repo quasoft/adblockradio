@@ -6,7 +6,6 @@ import gi
 
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
-gi.require_version('Gtk', '3.0')
 from gi.repository import GObject, Gst, GLib
 
 import config
@@ -193,8 +192,7 @@ class Player:
 
         # Automatically extract uri to stream from m3u playlists
         stream_uri = uri
-        if stream_uri.endswith("m3u"):
-            stream_uri = utils.read_uri_from_m3u(stream_uri)
+        stream_uri = utils.read_uri_from_playlist(stream_uri)
 
         # Set URI to online radio
         self._player.set_property('uri', stream_uri)
