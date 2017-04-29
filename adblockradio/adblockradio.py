@@ -68,12 +68,13 @@ class ConsoleApp:
     def __init__(self):
         GObject.threads_init()
 
+        self._loop = GObject.MainLoop()
         self._player = Player()
 
     def run(self, uri):
         self._player.play(uri)
 
-        self._loop = GObject.MainLoop()
+
         threading.Thread(target=self._loop.run).start()
         while True:
             time.sleep(1)
