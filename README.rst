@@ -116,12 +116,10 @@ To build the binary package for Window yourself, follow these steps:
 
 #. Install All-In-One PyGI/PyGObject for Windows (tested with pygi-aio-3.18.2_rev12-setup). During setup you have to select the following libraries:
 
-   ::
-   
-   Gst-plugins 1.10.4
-   Gst-plugins-extra 1.10.4
-   GStreamer 1.10.4
-   GTK+ 3.18.9
+   - Gst-plugins 1.10.4
+   - Gst-plugins-extra 1.10.4
+   - GStreamer 1.10.4
+   - GTK+ 3.18.9
 
 #. Upgrade pip of Python 3.4:
 
