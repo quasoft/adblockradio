@@ -7,7 +7,7 @@ init:
 	sudo apt-get install python3-pyqt4 pyqt4-dev-tools
 	sudo apt-get install fakeroot python3-all
 	# sudo apt-get install python3-stdeb qt4-designer
-	$(PYTHON) -m pip install appdirs plac requests
+	sudo $(PYTHON) -m pip install appdirs plac requests
 
 dist: source deb
 
