@@ -14,8 +14,7 @@ class BaseReader(QtCore.QObject):
         self._uri = uri
 
         # Automatically extract uri to stream from m3u playlists
-        if self._uri.endswith("m3u"):
-            self._uri = utils.get_stream_from_playlist(self._uri)
+        self._uri = utils.read_uri_from_playlist(self._uri)
 
         self._stopFlag = Event()
         self._thread = None

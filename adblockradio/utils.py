@@ -37,7 +37,16 @@ def get_station_name(uri):
     return name
 
 
-def get_stream_from_playlist(url):
+def read_uri_from_playlist(uri):
+    if uri.endswith("m3u"):
+        return read_uri_from_m3u_url(uri)
+    elif uri.endswith("pls"):
+        return read_uri_from_pls_url(uri)
+
+    return uri
+
+
+def read_uri_from_m3u_url(url):
     resp = requests.get(
         url,
         headers={
@@ -49,15 +58,45 @@ def get_stream_from_playlist(url):
     content = str(resp.text)
     resp.close()
 
-    if not content:
+    return read_uri_from_m3u_string(content)
+
+
+def read_uri_from_m3u_string(s):
+    if not s:
         return None
 
-    lines = (line for line in content.splitlines() if line.strip().startswith("http"))
+    lines = (line for line in s.splitlines() if line.strip().startswith("http"))
+
+    if not lines:
+        return None
+    return next(lines, None)
+
+
+def read_uri_from_pls_url(url):
+    resp = requests.get(
+        url,
+        headers={
+            'User-Agent': config.user_agent
+        }
+    )
+    resp.raise_for_status()
+
+    content = str(resp.text)
+    resp.close()
+
+    return read_uri_from_pls_string(content)
+
+
+def read_uri_from_pls_string(s):
+    if not s:
+        return None
+
+    lines = (line for line in s.splitlines() if line.strip().startswith("File1"))
 
     if not lines:
         return None
 
-    return next(lines)
+    return next(lines).split('=', 1)[1].strip()
 
 
 def sanitize_filename(filename):
