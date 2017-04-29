@@ -4,9 +4,17 @@ dist: trusty
 sudo: required
 python:
   - 3.4
+branches:
+  only:
+    - master
+virtualenv:
+  system_site_packages: true
 install:
-  - python -m pip install six packaging appdirs
-  - python -m easy_install -U setuptools
+  - sudo apt-get update
+  - sudo apt-get install python3-coverage
+  - sudo python -m pip install six packaging appdirs
+  - sudo python -m easy_install -U setuptools
+  - sudo python -m pip install
   - make init
 script:
   - nosetests --with-coverage --cover-erase --cover-html --cover-package=adblockradio --all-modules --cover-branches
