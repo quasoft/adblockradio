@@ -76,14 +76,13 @@ Ubuntu 16.04:
 
        python3 adblockradio/adblockradio.py
 
-
    or in console mode (eg. for debugging purposes):
 
    ::
 
        python3 adblockradio/adblockradio.py --console
 
-    If you have Anaconda Python installed, use full path to Python binary (replace ``python3`` with ``/usr/bin/python3``)
+   If you have Anaconda Python installed, use full path to Python binary (replace ``python3`` with ``/usr/bin/python3``)
 
    *You can add more radio stations to config.py file*
 
@@ -109,7 +108,7 @@ To build the binary package for Window yourself, follow these steps:
 
 #. Install Python 3.4, 32-bit version. This is important as PyGi currently does not support Python versions newer than 3.4.
 
-#. Install All-In-One PyGI/PyGObject for Windows (tested with pygi-aio-3.18.2_rev12-setup). During setup you have to select the following libraries:
+#. Install ``All-In-One PyGI/PyGObject`` for Windows (tested with ``pygi-aio-3.18.2_rev12-setup``). During setup you have to select the following libraries:
 
    - Gst-plugins 1.10.4
    - Gst-plugins-extra 1.10.4
@@ -120,15 +119,15 @@ To build the binary package for Window yourself, follow these steps:
 
    ::
    
-   python.exe -m pip install --upgrade pip
+       python.exe -m pip install --upgrade pip
    
-#. Find and download a suitable wheel file for PyQt4 (tested with PyQt4-4.11.4-cp34-cp34m-win32.whl)
+#. Find and download a suitable wheel file for PyQt4 (tested with ``PyQt4-4.11.4-cp34-cp34m-win32.whl``)
    
 #. Install PyQt4 for Python:
 
    ::
    
-   python.exe -m pip install PyQt4-4.11.4-cp34-cp34m-win32.whl
+       python.exe -m pip install PyQt4-4.11.4-cp34-cp34m-win32.whl
 
 #. Make sure the player works - ``python.exe adblockradio\adblockradio.py``
 
@@ -144,4 +143,3 @@ Credits
 
 
 .. _`python3-adblockradio_0.3.2-1_all.deb`: https://github.com/quasoft/adblockradio/releases/download/0.3.2/python3-adblockradio_0.3.2-1_all.deb
-.. _`adblockradio_0.3.2.zip`: https://github.com/quasoft/adblockradio/releases/download/0.3.2/adblockradio_0.3.2.zip
