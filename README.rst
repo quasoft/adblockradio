@@ -23,18 +23,13 @@ Binary packages for the following OSes are provided:
 
    `python3-adblockradio_0.3.2-1_all.deb`_
 
--  Windows 10 64-bit:
-
-   `adblockradio_0.3.2.zip`_
-
-
 If you want to run the player on another OS, you might need to install
 it manually - see below.
 
 How to customize:
 -----------------
 
-After you install the player you need to add your your radio stations and setup blacklist patterns.
+After you install the player you need to add your radio stations and setup blacklist patterns.
 
 #. Edit list of radio stations in ``config.py``
 
