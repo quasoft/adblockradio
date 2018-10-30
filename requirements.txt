@@ -1,4 +1,4 @@
 appdirs==1.4.0
 plac==0.9.6
-requests==2.9.1
+requests>=2.20.0
 stdeb==0.8.5
